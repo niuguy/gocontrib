@@ -1,0 +1,35 @@
+# Compiled Go binary files
+*.exe
+*.o
+*.a
+*.out
+
+# Output directories
+/_output/
+/bin/
+/vendor/
+/go.sum
+
+# Dependency directories
+/vendor/
+/go.sum
+/go.mod
+
+# Testing binary, build directory
+/test/
+/build/
+
+# IDE and text editor specific files/directories
+.idea/
+.vscode/
+*.swp
+*.swo
+*.swx
+*.bak
+*.tmp
+
+# Log files
+*.log
+
+# Environment variables file
+.env
