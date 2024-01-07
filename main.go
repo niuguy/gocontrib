@@ -1,7 +1,10 @@
 package main
 
-import "gocontrib/pkg/server"
+import (
+	"github.com/niuguy/gocontrib/cmd"
+)
 
 func main() {
-	server.Start()
+	app := cmd.NewApp()
+	app.Start()
 }

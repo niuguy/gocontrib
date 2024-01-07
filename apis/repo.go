@@ -2,21 +2,12 @@ package github
 
 import (
 	"context"
+	"contrib/backend/models"
 	"fmt"
-	"github.com/google/go-github/v56/github"
-	"gocontrib/pkg/models"
 	"strings"
-)
 
-// Repository Define a struct to unmarshal repository data
-//type Repository struct {
-//	ID          int64  `json:"id"`
-//	Owner        string `json:"name"`
-//	Name    string `json:"full_name"`
-//	Description string `json:"description"`
-//	Stars       int    `json:"stargazers_count"`
-//	OpenIssues  int    `json:"open_issues_count"`
-//}
+	"github.com/google/go-github/v56/github"
+)
 
 func (c *GitHubClient) GetRepositoriesWithPagination(maxCount int, languages ...string) ([]models.Repository, error) {
 	var repositories []models.Repository
@@ -48,13 +39,63 @@ func (c *GitHubClient) GetRepositoriesWithPagination(maxCount int, languages ...
 
 		for _, repo := range result.Repositories {
 			repositories = append(repositories, models.Repository{
-				GitHubID:    repo.GetID(),
+				GitHubID:    uint(repo.GetID()),
 				Owner:       repo.GetOwner().GetLogin(),
 				Name:        repo.GetName(),
 				Description: repo.GetDescription(),
 				Stars:       repo.GetStargazersCount(),
 				OpenIssues:  repo.GetOpenIssuesCount(),
 				Language:    repo.GetLanguage(),
+			})
+		}
+
+		page++
+
+		// Stop fetching if maxCount is reached.
+		if len(repositories) >= maxCount {
+			break
+		}
+	}
+
+	// Trim the results to the specified maxCount.
+	if len(repositories) > maxCount {
+		repositories = repositories[:maxCount]
+	}
+
+	return repositories, nil
+}
+
+// Get starred repositories of a user
+func (c *GitHubClient) GetStarredRepositoriesWithPagination(maxCount int) ([]models.Repository, error) {
+	var repositories []models.Repository
+	page := 1
+
+	ctx := context.Background()
+
+	for {
+		opts := &github.ActivityListStarredOptions{
+			ListOptions: github.ListOptions{PerPage: perPage, Page: page},
+		}
+
+		result, _, err := c.client.Activity.ListStarred(ctx, "niuguy", opts)
+		if err != nil {
+			return nil, err
+		}
+
+		if len(result) == 0 {
+			break
+		}
+
+		for _, repo := range result {
+			repositories = append(repositories, models.Repository{
+				GitHubID:    uint(repo.Repository.GetID()),
+				Owner:       repo.Repository.GetOwner().GetLogin(),
+				Name:        repo.Repository.GetName(),
+				Description: repo.Repository.GetDescription(),
+				Stars:       repo.Repository.GetStargazersCount(),
+				OpenIssues:  repo.Repository.GetOpenIssuesCount(),
+				Language:    repo.Repository.GetLanguage(),
+				Starred:     true,
 			})
 		}
 
