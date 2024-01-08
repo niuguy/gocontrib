@@ -1,9 +1,8 @@
 /* SPDX-FileCopyrightText: 2014-present Kriasoft */
 /* SPDX-License-Identifier: MIT */
 
-import { Box, BoxProps, Button } from "@mui/joy";
+import { Box, BoxProps } from "@mui/joy";
 import { Fragment, Suspense } from "react";
-import { Link } from "react-router-dom";
 
 
 export function Toolbar(props: ToolbarProps): JSX.Element {

@@ -5,15 +5,6 @@ import { Container, Typography } from "@mui/joy";
 import Table from "@mui/joy/Table";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 
-import {
-  collection,
-  doc,
-  getDocs,
-  query,
-  updateDoc,
-  where,
-} from "firebase/firestore";
-
 
 interface Task {
   doc_id: string;
@@ -81,7 +72,7 @@ export const Component = function Tasks(): JSX.Element {
       //   status: newStatus,
       // });
 
-      // console.log(`Task ${docId} status changed to ${newStatus}`);
+      console.log(`Task ${docId} status changed to ${newStatus}`);
 
       // Refetch tasks to reflect the update
       queryClient.invalidateQueries();

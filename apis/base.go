@@ -1,30 +1,24 @@
 package apis
 
 import (
-	"net/http"
-
 	"github.com/labstack/echo/v4"
-	"github.com/pocketbase/pocketbase/core"
-
-	"github.com/niuguy/gocontrib/ui"
+	"github.com/labstack/echo/v4/middleware"
+	"github.com/niuguy/gocontrib/daos"
 )
 
-func Serve() {
+func InitAPIs(dao *daos.Dao) *echo.Echo {
 	e := echo.New()
-	e.GET("/", func(c echo.Context) error {
-		return c.String(http.StatusOK, "Hello, World!")
-	})
-	e.Logger.Fatal(e.Start(":1323"))
-}
 
-func bindStaticAdminUI(app core.App, e *echo.Echo) error {
-	// redirect to trailing slash to ensure that relative urls will still work properly
+	// Middleware
+	e.Use(middleware.Logger())
+	e.Use(middleware.Recover())
 
-	// serves static files from the /ui/dist directory
-	// (similar to echo.StaticFS but with gzip middleware enabled)
-	e.GET(
-		echo.StaticDirectoryHandler(ui.DistDirFS, false),
-	)
+	// start the api server
+	api := e.Group("/api")
+	bindTasksApi(api)
+	// start the static file server
+	e.Static("/", "ui/dist")
 
-	return nil
+	return e
+
 }
