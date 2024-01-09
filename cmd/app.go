@@ -21,11 +21,7 @@ func (a *App) Start() {
 
 	dao := daos.InitDao(".")
 
-	api := apis.InitAPIs(dao)
-
-	api.Start(":1323")
-
-	api.Static("/", "ui/dist")
+	apis.InitAPIs(dao)
 
 	daemon.Start()
 

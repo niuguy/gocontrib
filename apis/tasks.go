@@ -1,8 +1,11 @@
 package apis
 
-import "github.com/labstack/echo/v4"
+import (
+	"github.com/gin-gonic/gin"
+	"github.com/niuguy/gocontrib/models"
+)
 
-func bindTasksApi(api *echo.Group) {
+func bindTasksApi(api *gin.RouterGroup) {
 	api.GET("/tasks", getTasks)
 	api.POST("/tasks", createTask)
 	api.GET("/tasks/:id", getTask)
@@ -10,22 +13,29 @@ func bindTasksApi(api *echo.Group) {
 	api.DELETE("/tasks/:id", deleteTask)
 }
 
-func getTasks(c echo.Context) error {
-	return nil
+func getTasks(c *gin.Context) {
+	task := models.Task{
+		IssueID:        1,
+		IssueTitle:     "Sample Issue",
+		IssueRepoOwner: "user",
+		IssueRepoName:  "repo",
+		IssueURL:       "https://github.com/user/repo/issues/1",
+		Status:         "Open",
+		Note:           "This is a sample note",
+	}
+	tasks := []models.Task{task}
+	c.JSON(200, tasks)
+
 }
 
-func createTask(c echo.Context) error {
-	return nil
+func createTask(c *gin.Context) {
 }
 
-func getTask(c echo.Context) error {
-	return nil
+func getTask(c *gin.Context) {
 }
 
-func updateTask(c echo.Context) error {
-	return nil
+func updateTask(c *gin.Context) {
 }
 
-func deleteTask(c echo.Context) error {
-	return nil
+func deleteTask(c *gin.Context) {
 }

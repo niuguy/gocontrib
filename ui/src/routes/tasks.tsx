@@ -4,6 +4,7 @@
 import { Container, Typography } from "@mui/joy";
 import Table from "@mui/joy/Table";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
+import apiClient from "../apis/client";
 
 
 interface Task {
@@ -23,19 +24,11 @@ export const Component = function Tasks(): JSX.Element {
   const queryClient = useQueryClient();
 
   const fetchTasks = async (): Promise<Task[]> => {
-    // const querySnapshot = await getDocs(
-    //   query(collection(db, "tasks"), where("uid", "==", user.uid)),
-    // );
-    // return querySnapshot.docs.map((doc) => ({
-    //   doc_id: doc.id,
-    //   issue_id: doc.data().issue_id,
-    //   issue_title: doc.data().issue_title,
-    //   issue_url: doc.data().issue_url,
-    //   status: doc.data().status,
-    //   repo_owner: doc.data().repo_owner,
-    //   repo_name: doc.data().repo_name,
-    // })) as Task[];
-    return [];
+    const _tasks = await apiClient.get("/tasks");
+    //map to the tasks object
+    console.log(_tasks.data);
+    return _tasks.data;
+    
   };
 
   const {
