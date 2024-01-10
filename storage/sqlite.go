@@ -8,16 +8,7 @@ import (
 	"gorm.io/gorm"
 )
 
-type Storage struct {
-	DB *gorm.DB
-}
-
-func NewStorage(dbDir string) *Storage {
-	db := connectDB(dbDir)
-	return &Storage{DB: db}
-}
-
-func connectDB(dbDir string) *gorm.DB {
+func setupDB(dbDir string) *gorm.DB {
 
 	if dbDir == "" {
 		homeDir, err := os.UserHomeDir()
