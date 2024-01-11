@@ -1,9 +1,11 @@
 package server
 
 import (
+	"fmt"
 	"io/fs"
 	"log"
 	"net/http"
+	"os"
 	"strings"
 
 	"github.com/gin-gonic/gin"
@@ -37,9 +39,24 @@ func bindApis(engine *gin.Engine, s *storage.Storage) {
 
 func bindUI(engine *gin.Engine) {
 	dist, _ := fs.Sub(ui.Dist, "dist")
+	fileServer := http.FileServer(http.FS(dist))
+
 	engine.Use(func(c *gin.Context) {
+		fmt.Println("Request URL:", c.Request.URL.Path)
+
 		if !strings.HasPrefix(c.Request.URL.Path, "/api") {
-			http.FileServer(http.FS(dist)).ServeHTTP(c.Writer, c.Request)
+			// Check if the requested file exists
+			_, err := fs.Stat(dist, strings.TrimPrefix(c.Request.URL.Path, "/"))
+			if os.IsNotExist(err) {
+				// If the file does not exist, serve index.html
+				fmt.Println("File not found, serving index.html")
+				c.Request.URL.Path = "/"
+			} else {
+				// Serve other static files
+				fmt.Println("Serving other static files")
+			}
+
+			fileServer.ServeHTTP(c.Writer, c.Request)
 			c.Abort()
 		}
 	})

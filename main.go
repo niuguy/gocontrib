@@ -9,7 +9,6 @@ import (
 func main() {
 	app := core.NewApp()
 	app.Start()
-	sleep(10)
 	openBrowser("http://localhost:8080")
 }
 
