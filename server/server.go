@@ -22,19 +22,19 @@ func NewServer(s *storage.Storage) *Server {
 
 	engine := gin.Default()
 
+	ghClient := NewGitHubClient(os.Getenv("GITHUB_TOKEN"))
+
 	// serve api
-	bindApis(engine, s)
+	apiRoute := engine.Group("/api")
+	BindTasksApi(apiRoute, s)
+	BindGithubApi(apiRoute, ghClient)
+
 	// serve static files
 	bindUI(engine)
 
 	_server := Server{storage: s, engine: engine}
 
 	return &_server
-}
-
-func bindApis(engine *gin.Engine, s *storage.Storage) {
-	apiRoute := engine.Group("/api")
-	BindTasksApi(apiRoute, s)
 }
 
 func bindUI(engine *gin.Engine) {

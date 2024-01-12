@@ -8,5 +8,8 @@ ui:
 app:
 	go build -o bin/gocrontrib main.go
 
-start:
+run:
 	go run main.go
+
+run-ui:	
+	cd ui && pnpm run dev
