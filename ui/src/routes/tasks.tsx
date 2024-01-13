@@ -31,11 +31,11 @@ export const Component = function Tasks(): JSX.Element {
     
   };
 
-  const {
-    data: tasks,
-    isLoading,
-    error,
-  } = useQuery({ queryKey: ["tasks"], queryFn: fetchTasks });
+    const {
+      data: tasks,
+      isLoading,
+      error,
+    } = useQuery({ queryKey: ["tasks"], queryFn: fetchTasks });
 
   // Group tasks by repo_owner and repo_name
   const groupedTasks = tasks?.reduce<Record<string, Task[]>>((acc, task) => {

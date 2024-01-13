@@ -8,6 +8,7 @@ import (
 	"os"
 	"strings"
 
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/niuguy/gocontrib/storage"
 	"github.com/niuguy/gocontrib/ui"
@@ -21,6 +22,13 @@ type Server struct {
 func NewServer(s *storage.Storage) *Server {
 
 	engine := gin.Default()
+
+	config := cors.DefaultConfig()
+	config.AllowAllOrigins = true
+	// config.AllowMethods = []string{"GET"} // Allow only GET requests
+	// If you need to allow specific headers, use config.AllowHeaders
+
+	engine.Use(cors.New(config))
 
 	ghClient := NewGitHubClient(os.Getenv("GITHUB_TOKEN"))
 

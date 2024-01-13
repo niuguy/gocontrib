@@ -15,7 +15,7 @@ export function Following(): JSX.Element {
   return (
     <ListItem nested sx={{ mt: 2 }}>
       <ListSubheader sx={{ letterSpacing: "2px", fontWeight: "800" }}>
-        Following
+        Help Wanted Issues
       </ListSubheader>
       <List
         aria-labelledby="nav-list-tags"

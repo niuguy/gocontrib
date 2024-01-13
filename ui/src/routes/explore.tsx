@@ -1,9 +1,14 @@
-import { Box, Button, Chip, Container, Input, Card,Typography } from "@mui/joy";
-import { Pagination } from "@mui/material";
-import { useQueryClient } from "@tanstack/react-query";
-import apiClient from "../apis/client";
+import {
+  Box,
+  Button,
+  Card,
+  Chip,
+  Container,
+  Input,
+  Typography,
+} from "@mui/joy";
 import { useState } from "react";
-
+import apiClient from "../apis/client";
 
 interface Repo {
   id: number;
@@ -15,16 +20,12 @@ interface Repo {
   stars: number;
 }
 
-
-
 export const Component = function Explore(): JSX.Element {
-
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
   const [repos, setRepos] = useState<Repo[]>([]);
-  const [selectedLanguage, setSelectedLanguage] = useState('');
-  const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1); // Assuming you know total pages, adjust as needed
-
+  const [selectedLanguage, _setSelectedLanguage] = useState("");
+  const [currentPage, _setCurrentPage] = useState(1);
+  const [_totalPages, _setTotalPages] = useState(1); // Assuming you know total pages, adjust as needed
 
   const languages = [
     "Java",
@@ -37,27 +38,37 @@ export const Component = function Explore(): JSX.Element {
     "Go",
   ];
 
-  const fetchRepos = async (lang: string, searchTerm: string): Promise<Repo[]> => {
-    var _params = {}
-    if (lang !==""){
-      _params = {
-        lang: lang,
-      }
-    } else {
-      _params = {
-        q: searchTerm,
-      }
+  const fetchRepos = async (
+    lang: string,
+    searchTerm: string,
+    currentPage: number
+  ): Promise<Repo[]> => {
+    const _params: { [key: string]: any } = {};
+
+    if (lang) {
+      _params.lang = lang;
     }
+    if (searchTerm) {
+      _params.q = searchTerm;
+    }
+    if (currentPage) {
+      _params.page = currentPage;
+    }
+    _params.count = 10;
+
     const repos = await apiClient.get("/github/repo/search", {
       params: _params,
     });
     return repos.data;
-    
   };
 
   const handleSearch = async () => {
     try {
-      const fetchedRepos = await fetchRepos(selectedLanguage, searchTerm, currentPage);
+      const fetchedRepos = await fetchRepos(
+        "",
+        searchTerm,
+        currentPage
+      );
       setRepos(fetchedRepos);
       // Optionally, set total pages based on response if available
     } catch (error) {
@@ -65,13 +76,18 @@ export const Component = function Explore(): JSX.Element {
     }
   };
 
-  const handlePageChange = (page: number) => {
-    setCurrentPage(page);
-    handleSearch(); // Fetch new page of repos
-  };
+  const handleLanguageChange = (language: string) => {
+    _setSelectedLanguage(language);
+    fetchRepos(language, "", currentPage).then((res) => {
+      setRepos(res);
+    });
+  }
 
-    
+  // const handlePageChange = (_event: React.ChangeEvent<unknown>, page: number) => {
 
+  //   setCurrentPage(page);
+  //   handleSearch(); // Fetch new page of repos
+  // };
 
   return (
     <Container
@@ -86,9 +102,11 @@ export const Component = function Explore(): JSX.Element {
         sx={{ display: "flex", justifyContent: "center", width: "100%", py: 2 }}
       >
         <Input
-          sx={{ "--Input-decoratorChildHeight": "45px", width: "80%" }}
+          sx={{ "--Input-decoratorChildHeight": "45px", width: "60%" }}
           type="text"
           placeholder="Search repositories..."
+          value={searchTerm} // Bind the input to the searchTerm state
+          onChange={(e) => setSearchTerm(e.target.value)} // Update the state on input change
           endDecorator={
             <Button
               variant="solid"
@@ -113,30 +131,28 @@ export const Component = function Explore(): JSX.Element {
           width: "100%",
         }}
       >
-        {languages.map((language, index) => (
-          <Chip key={index} disabled={false} onClick={function () {}} size="lg">
-            {language}
-          </Chip>
+        {languages.map((language, _) => (
+          <Chip
+          key={language}
+          disabled={false}
+          onClick={() => handleLanguageChange(language)}
+          size="lg"
+          variant={selectedLanguage === language ? "solid" : "outlined"}
+        >
+          {language}
+        </Chip>
         ))}
       </Box>
 
-      <Box sx={{ width: '100%', py: 2 }}>
+      <Box sx={{ width: "100%", py: 2 }}>
         {repos.map((repo) => (
           <Card key={repo.id} sx={{ mb: 2, p: 2 }}>
-            <Typography >{repo.name}</Typography>
+            <Typography>{repo.name}</Typography>
             <Typography>{repo.description}</Typography>
             {/* Add more repository details here */}
           </Card>
         ))}
       </Box>
-
-      {/* Pagination */}
-      <Pagination
-        count={totalPages}
-        page={currentPage}
-        onChange={handlePageChange}
-        sx={{ mt: 2 }}
-      />
     </Container>
   );
 };
