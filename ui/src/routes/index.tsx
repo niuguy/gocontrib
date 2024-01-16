@@ -33,6 +33,7 @@ export const router = createBrowserRouter([
       { path: "repos", lazy: () => import("./repos") },
       { path: "tasks", lazy: () => import("./tasks") },
       { path: "prs", lazy: () => import("./prs") },
+      { path: "issues/:repo_owner/:repo_name", lazy: () => import("./issues") },
     ],
   },
 ]);

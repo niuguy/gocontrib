@@ -36,6 +36,7 @@ func NewServer(s *storage.Storage) *Server {
 	apiRoute := engine.Group("/api")
 	BindTasksApi(apiRoute, s)
 	BindGithubApi(apiRoute, ghClient)
+	BindRepoApi(apiRoute, s)
 
 	// serve static files
 	bindUI(engine)

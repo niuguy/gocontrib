@@ -6,7 +6,6 @@ import Table from "@mui/joy/Table";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import apiClient from "../apis/client";
 
-
 interface Task {
   doc_id: string;
   issue_id: string;
@@ -20,7 +19,6 @@ interface Task {
 }
 
 export const Component = function Tasks(): JSX.Element {
-
   const queryClient = useQueryClient();
 
   const fetchTasks = async (): Promise<Task[]> => {
@@ -28,14 +26,13 @@ export const Component = function Tasks(): JSX.Element {
     //map to the tasks object
     console.log(_tasks.data);
     return _tasks.data;
-    
   };
 
-    const {
-      data: tasks,
-      isLoading,
-      error,
-    } = useQuery({ queryKey: ["tasks"], queryFn: fetchTasks });
+  const {
+    data: tasks,
+    isLoading,
+    error,
+  } = useQuery({ queryKey: ["tasks"], queryFn: fetchTasks });
 
   // Group tasks by repo_owner and repo_name
   const groupedTasks = tasks?.reduce<Record<string, Task[]>>((acc, task) => {

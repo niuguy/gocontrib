@@ -32,9 +32,18 @@ func BindGithubApi(api *gin.RouterGroup, g *GitHubClient) {
 	api.GET("/github/repo/search", func(c *gin.Context) {
 		searchGithubRepo(c, g)
 	})
+	api.GET("/github/repo/:owner/:repo/issues", func(c *gin.Context) {
+		listIssues(c, g)
+	})
+}
+
+type RepoResponse struct {
+	TotalCount int
+	Items      []models.Repository
 }
 
 func searchGithubRepo(c *gin.Context, g *GitHubClient) {
+
 	var repositories []models.Repository
 
 	lang := c.Query("lang")
@@ -92,6 +101,47 @@ func searchGithubRepo(c *gin.Context, g *GitHubClient) {
 		}
 	}
 
-	c.JSON(200, repositories)
+	var response RepoResponse
+	response.TotalCount = result.GetTotal()
+	response.Items = repositories
 
+	c.JSON(200, response)
+
+}
+
+func listIssues(c *gin.Context, g *GitHubClient) {
+	var issues []models.Issue
+
+	ctx := context.Background()
+	owner := c.Param("owner")
+	repo := c.Param("repo")
+	label := c.Query("label")
+
+	opts := &github.IssueListByRepoOptions{
+		State:  "open",
+		Labels: []string{label},
+	}
+
+	result, _, err := g.client.Issues.ListByRepo(ctx, owner, repo, opts)
+	if err != nil {
+		fmt.Printf("Error fetching issues: %s\n", err)
+	}
+
+	if len(result) != 0 {
+
+		for _, issue := range result {
+			issues = append(issues, models.Issue{
+				GitHubID:        int64(issue.GetID()),
+				RepoID:          uint(issue.GetRepository().GetID()),
+				URL:             issue.GetHTMLURL(),
+				Title:           issue.GetTitle(),
+				CommentsCount:   issue.GetComments(),
+				IsAssigned:      issue.GetAssignee() != nil,
+				GitHubCreatedAt: issue.GetCreatedAt(),
+				Status:          issue.GetState(),
+			})
+		}
+	}
+
+	c.JSON(200, issues)
 }

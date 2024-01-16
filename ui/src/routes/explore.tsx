@@ -1,14 +1,7 @@
-import {
-  Box,
-  Button,
-  Card,
-  Chip,
-  Container,
-  Input,
-  Typography,
-} from "@mui/joy";
+import { Box, Button, Chip, Container, Input, Typography } from "@mui/joy";
 import { useState } from "react";
-import apiClient from "../apis/client";
+import { useNavigate } from "react-router-dom";
+
 
 interface Repo {
   id: number;
@@ -22,72 +15,38 @@ interface Repo {
 
 export const Component = function Explore(): JSX.Element {
   const [searchTerm, setSearchTerm] = useState("");
-  const [repos, setRepos] = useState<Repo[]>([]);
   const [selectedLanguage, _setSelectedLanguage] = useState("");
-  const [currentPage, _setCurrentPage] = useState(1);
-  const [_totalPages, _setTotalPages] = useState(1); // Assuming you know total pages, adjust as needed
+  const navigate = useNavigate();
 
   const languages = [
-    "Java",
     "JavaScript",
+    "TypeScript",
     "Python",
     "C++",
+    "C",
     "C#",
+    "Java",
     "PHP",
     "Ruby",
     "Go",
+    ".NET",
+    "SQL",
+    "Scratch",
+    "Rust",
+    "Fortran",
+    "Kotlin",
+    "Swift",
+    "Ruby",
+    "Cobol",
   ];
 
-  const fetchRepos = async (
-    lang: string,
-    searchTerm: string,
-    currentPage: number
-  ): Promise<Repo[]> => {
-    const _params: { [key: string]: any } = {};
-
-    if (lang) {
-      _params.lang = lang;
-    }
-    if (searchTerm) {
-      _params.q = searchTerm;
-    }
-    if (currentPage) {
-      _params.page = currentPage;
-    }
-    _params.count = 10;
-
-    const repos = await apiClient.get("/github/repo/search", {
-      params: _params,
-    });
-    return repos.data;
-  };
-
   const handleSearch = async () => {
-    try {
-      const fetchedRepos = await fetchRepos(
-        "",
-        searchTerm,
-        currentPage
-      );
-      setRepos(fetchedRepos);
-      // Optionally, set total pages based on response if available
-    } catch (error) {
-      console.error("Error fetching repos:", error);
-    }
+    navigate(`/repos?q=${searchTerm}`);
   };
 
   const handleLanguageChange = (language: string) => {
-    _setSelectedLanguage(language);
-    fetchRepos(language, "", currentPage).then((res) => {
-      setRepos(res);
-    });
-  }
-
-  // const handlePageChange = (_event: React.ChangeEvent<unknown>, page: number) => {
-
-  //   setCurrentPage(page);
-  //   handleSearch(); // Fetch new page of repos
-  // };
+    navigate(`/repos?lang=${language}`);
+  };
 
   return (
     <Container
@@ -96,6 +55,8 @@ export const Component = function Explore(): JSX.Element {
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
+        justifyContent: "center",
+        height: "60%",
       }}
     >
       <Box
@@ -121,6 +82,15 @@ export const Component = function Explore(): JSX.Element {
         />
       </Box>
 
+
+      <Typography
+        sx={{ 
+          my: 3 }} 
+        level="h4"
+      >
+        Top Repositories by Language:
+      </Typography>
+
       <Box
         sx={{
           display: "flex",
@@ -133,24 +103,14 @@ export const Component = function Explore(): JSX.Element {
       >
         {languages.map((language, _) => (
           <Chip
-          key={language}
-          disabled={false}
-          onClick={() => handleLanguageChange(language)}
-          size="lg"
-          variant={selectedLanguage === language ? "solid" : "outlined"}
-        >
-          {language}
-        </Chip>
-        ))}
-      </Box>
-
-      <Box sx={{ width: "100%", py: 2 }}>
-        {repos.map((repo) => (
-          <Card key={repo.id} sx={{ mb: 2, p: 2 }}>
-            <Typography>{repo.name}</Typography>
-            <Typography>{repo.description}</Typography>
-            {/* Add more repository details here */}
-          </Card>
+            key={language}
+            disabled={false}
+            onClick={() => handleLanguageChange(language)}
+            size="lg"
+            variant={selectedLanguage === language ? "solid" : "outlined"}
+          >
+            {language}
+          </Chip>
         ))}
       </Box>
     </Container>

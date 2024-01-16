@@ -16,7 +16,7 @@ func NewStorage(dbDir string) *Storage {
 
 // AutoMigrate creates database tables if they do not exist.
 func (s *Storage) AutoMigrate() {
-	err := s.DB.AutoMigrate(&models.Task{})
+	err := s.DB.AutoMigrate(&models.Task{}, &models.Repository{})
 	if err != nil {
 		panic(err)
 	}

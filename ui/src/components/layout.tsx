@@ -14,13 +14,18 @@ import { Toolbar } from "./toolbar";
 export function MainLayout(): JSX.Element {
   return (
     <Fragment>
-      <GlobalStyles
+        <GlobalStyles
         styles={{
           "#root": {
             display: "grid",
             gridTemplateColumns: "auto 1fr",
             gridTemplateRows: "auto 1fr",
-            height: "100dvh",
+            height: "100vh",
+            overflow: "hidden",
+          },
+          "body": {
+            margin: 0,
+            overflow: "hidden",
           },
         }}
       />
@@ -31,9 +36,11 @@ export function MainLayout(): JSX.Element {
       <Logo sx={{ gridArea: "1 / 1 / 2 / 2", zIndex: 100 }} />
 
       <Box sx={{ gridArea: "1 / 2 / -1 / -1", pt: "60px" }}>
-        <Suspense>
+        <div style={{ height: "calc(100vh - 60px)", overflowY: "auto" }}>
+                <Suspense>
           <Outlet />
         </Suspense>
+        </div>
       </Box>
     </Fragment>
   );
