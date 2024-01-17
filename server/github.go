@@ -116,10 +116,19 @@ func listIssues(c *gin.Context, g *GitHubClient) {
 	owner := c.Param("owner")
 	repo := c.Param("repo")
 	label := c.Query("label")
+	page := c.Query("page")
+	perPage := c.Query("per_page")
+
+	pageNum, _ := strconv.Atoi(page)
+	perPageNum, _ := strconv.Atoi(perPage)
 
 	opts := &github.IssueListByRepoOptions{
 		State:  "open",
 		Labels: []string{label},
+		ListOptions: github.ListOptions{
+			Page:    pageNum,
+			PerPage: perPageNum,
+		},
 	}
 
 	result, _, err := g.client.Issues.ListByRepo(ctx, owner, repo, opts)

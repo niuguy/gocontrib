@@ -1,9 +1,11 @@
 import { Box, Button, Card, Container, Snackbar, Typography } from "@mui/joy";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { Fragment, useState } from "react";
-import { useLocation } from "react-router-dom";
+import {  useLocation } from "react-router-dom";
+import { useAtom } from "jotai";
 
 import apiClient from "../apis/client";
+import { refreshCounterAtom } from "../core/store";
 
 interface Repository {
   github_id: number;
@@ -20,6 +22,8 @@ export const Component = function Repos(): JSX.Element {
   const [successMessage, setSuccessMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const [openSnackbar, setOpenSnackbar] = useState(false);
+  const [refreshCounter, setRefreshCounter] = useAtom(refreshCounterAtom);
+
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
 
@@ -67,7 +71,7 @@ export const Component = function Repos(): JSX.Element {
 
   const doFollow = async (repo: Repository) => {
     try {
-      const _task = await apiClient.post("/repo", {
+      await apiClient.post("/repo", {
         github_id: repo.github_id,
         owner: repo.owner,
         name: repo.name,
@@ -79,7 +83,8 @@ export const Component = function Repos(): JSX.Element {
         starred: repo.starred,
       });
 
-      console.log(_task.data);
+      setRefreshCounter(refreshCounter + 1);
+      
       setSuccessMessage(" Submitted successfully!");
       setOpenSnackbar(true);
     } catch (error) {
@@ -103,6 +108,7 @@ export const Component = function Repos(): JSX.Element {
                   {repo.owner}/{repo.name}
                 </Typography>
                 <Typography gutterBottom>{repo.description}</Typography>
+                <Typography gutterBottom><a href={`/issues/${repo.owner}/${repo.name}`}>issues</a></Typography>
                 <Typography gutterBottom>Language: {repo.language}</Typography>
                 <Typography gutterBottom>Stars: {repo.stars}</Typography>
                 <Typography gutterBottom>

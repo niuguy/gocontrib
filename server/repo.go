@@ -9,6 +9,8 @@ import (
 func BindRepoApi(api *gin.RouterGroup, s *storage.Storage) {
 	api.POST("/repo", createRepo(s))
 	api.GET("/repos", getRepos(s))
+	api.DELETE("/repo/:owner/:name", deleteRepo(s))
+	api.GET("/repo/:owner/:name", getRepo(s))
 }
 
 func createRepo(s *storage.Storage) gin.HandlerFunc {
@@ -30,4 +32,26 @@ func getRepos(s *storage.Storage) gin.HandlerFunc {
 		c.JSON(200, repos)
 	}
 
+}
+
+func deleteRepo(s *storage.Storage) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		owner := c.Param("owner")
+		name := c.Param("name")
+		s.DeleteRepoByOwnerAndName(owner, name)
+		c.JSON(200, gin.H{"message": "repo deleted"})
+	}
+}
+
+func getRepo(s *storage.Storage) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		owner := c.Param("owner")
+		name := c.Param("name")
+		repo, err := s.RetrieveRepoByOwnerAndName(owner, name)
+		if err != nil {
+			c.JSON(200, nil)
+			return
+		}
+		c.JSON(200, repo)
+	}
 }

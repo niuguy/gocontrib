@@ -19,8 +19,7 @@ export function Navigation(): JSX.Element {
           label="My Tasks"
           icon={<FormatListBulletedIcon />}
         />
-        <NavItem path="/prs" label="My PRs" icon={<AssignmentTurnedInIcon />} />
-        <NavItem path="/trashed" label="Trashed" icon={<DeleteIcon />} />
+        <NavItem path="/prs" label="Report" icon={<AssignmentTurnedInIcon />} />
       </List>
     </ListItem>
   );

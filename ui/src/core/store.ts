@@ -17,3 +17,8 @@ export function StoreProvider(props: StoreProviderProps): JSX.Element {
 export type StoreProviderProps = {
   children: ReactNode;
 };
+
+
+import { atom } from 'jotai';
+
+export const refreshCounterAtom = atom(0);

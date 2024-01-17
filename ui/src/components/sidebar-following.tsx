@@ -11,7 +11,10 @@ import {
   ListSubheader,
 } from "@mui/joy";
 import apiClient from "../apis/client";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useAtom } from "jotai";
+import { refreshCounterAtom } from "../core/store";
+import { useEffect } from "react";
 
 interface Repo {
   id: number;
@@ -24,6 +27,10 @@ interface Repo {
 }
 
 export function Following(): JSX.Element {
+  const queryClient = useQueryClient();
+
+  const [refreshCounter] = useAtom(refreshCounterAtom);
+
   const fetchFollowings = async (): Promise<Repo[]> => {
     const _repos = await apiClient.get("/repos");
     //map to the tasks object
@@ -36,6 +43,11 @@ export function Following(): JSX.Element {
     isLoading,
     error,
   } = useQuery({ queryKey: ["following"], queryFn: fetchFollowings });
+
+  useEffect(() => {
+    // Refetch the data when the refreshCounter changes
+    queryClient.refetchQueries();
+  }, [refreshCounter, queryClient]);
 
   if (isLoading) {
     return <></>;
@@ -58,7 +70,7 @@ export function Following(): JSX.Element {
         }}
       >
         {followings?.map((repo) => (
-          <ListItem key={repo.id}>
+          <ListItem key={repo.github_id}>
             <ListItemButton>
               <ListItemDecorator>
                 <Box
@@ -70,9 +82,9 @@ export function Following(): JSX.Element {
                   }}
                 />
               </ListItemDecorator>
-              <ListItemContent>      
+              <ListItemContent>
                 <a href={`/issues/${repo.owner}/${repo.name}`}>
-                {repo.owner}/{repo.name} ({repo.open_issues})
+                  {repo.owner}/{repo.name} ({repo.open_issues})
                 </a>
               </ListItemContent>
             </ListItemButton>
