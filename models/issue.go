@@ -15,7 +15,7 @@ type Issue struct {
 	Language        string    `json:"language"`
 	CommentsCount   int       `json:"comments_count"`
 	IsAssigned      bool      `json:"is_assigned"`
-	Labels          string    `json:"labels"`
+	Labels          []string  `json:"labels"`
 	IsGoodFirst     bool      `json:"is_good_first"`
 	IsHelpWanted    bool      `json:"is_help_wanted"`
 	GitHubCreatedAt time.Time `json:"github_created_at"`

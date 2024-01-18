@@ -50,7 +50,7 @@ func searchGithubRepo(c *gin.Context, g *GitHubClient) {
 	term := c.Query("q")
 	minStars := 1000
 	pageNum := 1
-	pageCount := 100
+	pageCount := 20
 
 	if c.Query("minStars") != "" {
 		minStars, _ = strconv.Atoi(c.Query("minStars"))
@@ -77,7 +77,7 @@ func searchGithubRepo(c *gin.Context, g *GitHubClient) {
 	}
 	opts := &github.SearchOptions{
 		ListOptions: github.ListOptions{PerPage: pageCount, Page: pageNum},
-		Sort:        "help-wanted-issues",
+		Sort:        "stars",
 		Order:       "desc",
 	}
 
@@ -139,6 +139,10 @@ func listIssues(c *gin.Context, g *GitHubClient) {
 	if len(result) != 0 {
 
 		for _, issue := range result {
+			var labels []string
+			for _, label := range issue.Labels {
+				labels = append(labels, label.GetName())
+			}
 			issues = append(issues, models.Issue{
 				GitHubID:        int64(issue.GetID()),
 				RepoID:          uint(issue.GetRepository().GetID()),
@@ -148,6 +152,7 @@ func listIssues(c *gin.Context, g *GitHubClient) {
 				IsAssigned:      issue.GetAssignee() != nil,
 				GitHubCreatedAt: issue.GetCreatedAt(),
 				Status:          issue.GetState(),
+				Labels:          labels,
 			})
 		}
 	}

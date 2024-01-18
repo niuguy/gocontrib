@@ -84,7 +84,7 @@ export function Following(): JSX.Element {
               </ListItemDecorator>
               <ListItemContent>
                 <a href={`/issues/${repo.owner}/${repo.name}`}>
-                  {repo.owner}/{repo.name} ({repo.open_issues})
+                  {repo.owner}/{repo.name}
                 </a>
               </ListItemContent>
             </ListItemButton>

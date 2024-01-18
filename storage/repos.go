@@ -17,7 +17,7 @@ func (s *Storage) RetrieveRepoByOwnerAndName(owner string, name string) (*models
 	err := s.DB.First(&repo, "owner = ? AND name = ?", owner, name).Error
 	return &repo, err
 }
-
+	
 func (s *Storage) DeleteRepoByOwnerAndName(owner string, name string) {
 	s.DB.Where("owner = ? AND name = ?", owner, name).Delete(&models.Repository{})
 }

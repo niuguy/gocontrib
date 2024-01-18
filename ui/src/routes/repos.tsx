@@ -97,7 +97,7 @@ export const Component = function Repos(): JSX.Element {
   return (
     <Container sx={{ py: 2 }}>
       <Typography level="h2" gutterBottom>
-        Repos
+        Repos of search for '{searchTerm}' {language}
       </Typography>
       <Box sx={{ width: "100%", py: 2, overflowY: "auto" }}>
         {repos?.pages?.map((group, i) => (
@@ -113,9 +113,6 @@ export const Component = function Repos(): JSX.Element {
                 <Typography gutterBottom>Stars: {repo.stars}</Typography>
                 <Typography gutterBottom>
                   Open Issues: {repo.open_issues}
-                </Typography>
-                <Typography gutterBottom>
-                  Help Wanted Issues: {repo.help_wanted_issues}
                 </Typography>
                 <Button onClick={() => doFollow(repo)} sx={{ mt: 2 }}>
                   Follow

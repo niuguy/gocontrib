@@ -6,7 +6,7 @@ export interface Issue {
     language: string;
     commentsCount: number; // int in Go
     isAssigned: boolean;
-    labels: string;
+    labels: string[];
     isGoodFirst: boolean;
     isHelpWanted: boolean;
     gitHubCreatedAt: string; // ISO 8601 date string, equivalent to time.Time

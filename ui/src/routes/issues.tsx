@@ -1,4 +1,12 @@
-import { Box, Button, Card, Container, Snackbar, Typography } from "@mui/joy";
+import {
+  Box,
+  Button,
+  Card,
+  Container,
+  Snackbar,
+  Typography,
+  Chip,
+} from "@mui/joy";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { useState, Fragment, useEffect } from "react";
 import { useParams } from "react-router-dom";
@@ -17,6 +25,8 @@ export const Component = function Issues(): JSX.Element {
   const [errorMessage, setErrorMessage] = useState("");
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const { repo_owner, repo_name } = useParams();
+  const queryParams = new URLSearchParams(location.search);
+  const label = queryParams.get("label");
   const [refreshCounter, setRefreshCounter] = useAtom(refreshCounterAtom);
 
   const checkFollowStatus = async () => {
@@ -58,7 +68,7 @@ export const Component = function Issues(): JSX.Element {
   };
 
   const fetchIssues = async ({ pageParam = 1 }): Promise<Issue[]> => {
-    const _url =
+    var _url =
       "/github/repo/" +
       repo_owner +
       "/" +
@@ -66,6 +76,10 @@ export const Component = function Issues(): JSX.Element {
       "/issues?page=" +
       pageParam +
       "&per_page=10";
+
+    if (label) {
+      _url += "&label=" + label;
+    }
 
     const _issues = await apiClient.get(_url);
     return _issues.data;
@@ -78,7 +92,7 @@ export const Component = function Issues(): JSX.Element {
     isFetching,
     isFetchingNextPage,
   } = useInfiniteQuery({
-    queryKey: ["issues"],
+    queryKey: ["issues", label],
     queryFn: fetchIssues,
     getNextPageParam: (lastPage, pages) => {
       return pages.length + 1;
@@ -92,8 +106,7 @@ export const Component = function Issues(): JSX.Element {
 
   const submitTask = async (issue: Issue) => {
     try {
-      const _task = await apiClient.post("/tasks", {
-        issue_id: issue.id,
+      await apiClient.post("/tasks", {
         issue_title: issue.title,
         issue_url: issue.url,
         issue_repo_name: repo_name,
@@ -110,6 +123,15 @@ export const Component = function Issues(): JSX.Element {
 
   return (
     <Container sx={{ py: 2, position: "relative" }}>
+      <Chip
+        key="helpwanted"
+        disabled={false}
+        size="lg"
+        slotProps={{ action: { component: 'a', href: `/issues/${repo_owner}/${repo_name}?label=help%20wanted` } }}
+      >
+        Help Wanted
+      </Chip>
+
       <Button
         sx={{
           position: "absolute",
@@ -133,6 +155,11 @@ export const Component = function Issues(): JSX.Element {
                 <a href={issue.url} target="_blank">
                   {issue.title}
                 </a>
+                {issue.labels?.map((label, i) => (
+                  <Chip key={i} disabled={false}>
+                    {label}
+                  </Chip>
+                ))}
                 <Button onClick={() => submitTask(issue)}>Add Task</Button>
               </Card>
             ))}
