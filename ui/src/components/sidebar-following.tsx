@@ -33,8 +33,6 @@ export function Following(): JSX.Element {
 
   const fetchFollowings = async (): Promise<Repo[]> => {
     const _repos = await apiClient.get("/repos");
-    //map to the tasks object
-    console.log(_repos.data);
     return _repos.data;
   };
 

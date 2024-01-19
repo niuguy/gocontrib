@@ -1,6 +1,8 @@
 package storage
 
-import "github.com/niuguy/gocontrib/models"
+import (
+	"github.com/niuguy/gocontrib/models"
+)
 
 // Add tasks to the database
 func (s *Storage) AddTask(task *models.Task) error {
@@ -31,4 +33,8 @@ func (s *Storage) RetrieveTasks() ([]models.Task, error) {
             ELSE 4
         END`).Find(&tasks).Error
 	return tasks, err
+}
+
+func (s *Storage) DeleteTask(id int) error {
+	return s.DB.Delete(&models.Task{}, id).Error
 }

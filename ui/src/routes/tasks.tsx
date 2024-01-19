@@ -1,9 +1,9 @@
-import { Container, Typography } from "@mui/joy";
+import { Container, Typography, Button } from "@mui/joy";
 import Table from "@mui/joy/Table";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import apiClient from "../apis/client";
 import { Task } from "../core/types";
-import { Fragment } from "react";
+import DeleteIcon from "@mui/icons-material/Delete";
 
 export const Component = function Tasks(): JSX.Element {
   const queryClient = useQueryClient();
@@ -37,22 +37,27 @@ export const Component = function Tasks(): JSX.Element {
     return <Typography>Error fetching tasks</Typography>;
   }
 
-  const handleStatusChange = async (docId: number, newStatus: string) => {
+  const handleStatusChange = async (task: Task, newStatus: string) => {
     try {
-      // // Reference to the specific task document in Firestore
-      // const taskRef = doc(db, "tasks", docId);
+      task.status = newStatus;
+      await apiClient.put(`/tasks/${task.id}`, task);
 
-      // // Update the status field in the document
-      // await updateDoc(taskRef, {
-      //   status: newStatus,
-      // });
-
-      console.log(`Task ${docId} status changed to ${newStatus}`);
-
-      // Refetch tasks to reflect the update
       queryClient.invalidateQueries();
+      window.location.reload(); // Refresh the page
     } catch (error) {
       console.error("Error updating task status: ", error);
+    }
+  };
+
+  const handleDeleteClick = async (taskId: number) => {
+    if (window.confirm("Are you sure you want to delete this task?")) {
+      try {
+        await apiClient.delete(`/tasks/${taskId}`);
+        queryClient.invalidateQueries();
+        window.location.reload(); // Refresh the page
+      } catch (error) {
+        console.error("Error deleting task: ", error);
+      }
     }
   };
 
@@ -65,9 +70,9 @@ export const Component = function Tasks(): JSX.Element {
         >
           <thead>
             <tr>
-              <th style={{ width: "10%"}}>Repository</th>
+              <th style={{ width: "10%" }}>Repository</th>
               <th>Issue</th>
-              <th style={{ width: "10%"}}>Action</th>
+              <th style={{ width: "10%" }}>Action</th>
             </tr>
           </thead>
           <tbody>
@@ -84,26 +89,25 @@ export const Component = function Tasks(): JSX.Element {
                 >
                   <td>
                     {index === 0 && (
-                      <a href={repoUrl} target="_blank" rel="noreferrer" style={{ fontWeight: 'bold' }}>
-                        {repo_owner}/{repo_name}
+                      <a
+                        href={repoUrl}
+                        target="_blank"
+                        rel="noreferrer"
+                        style={{ fontWeight: "bold" }}
+                      >
+                        {repo_name}
                       </a>
                     )}
                   </td>
                   <td>
-                    <a
-                      href={task.issue_url}
-                      target="_blank"
-                      rel="noreferrer"
-                    >
+                    <a href={task.issue_url} target="_blank" rel="noreferrer">
                       {task.issue_title}
                     </a>
                   </td>
                   <td>
                     <select
                       value={task.status}
-                      onChange={(e) =>
-                        handleStatusChange(task.id, e.target.value)
-                      }
+                      onChange={(e) => handleStatusChange(task, e.target.value)}
                       aria-label="Change Task Status"
                     >
                       <option value="TODO">To Do</option>
@@ -111,6 +115,11 @@ export const Component = function Tasks(): JSX.Element {
                       <option value="DONE">Done</option>
                       <option value="CLOSED">Closed</option>
                     </select>
+
+                    <DeleteIcon
+                      style={{ cursor: "pointer" }} // Makes the icon look clickable
+                      onClick={() => handleDeleteClick(task.id)}
+                    />
                   </td>
                 </tr>
               ));

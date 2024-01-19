@@ -14,7 +14,7 @@ import { Toolbar } from "./toolbar";
 export function MainLayout(): JSX.Element {
   return (
     <Fragment>
-        <GlobalStyles
+      <GlobalStyles
         styles={{
           "#root": {
             display: "grid",
@@ -23,7 +23,7 @@ export function MainLayout(): JSX.Element {
             height: "100vh",
             overflow: "hidden",
           },
-          "body": {
+          body: {
             margin: 0,
             overflow: "hidden",
           },
@@ -37,9 +37,9 @@ export function MainLayout(): JSX.Element {
 
       <Box sx={{ gridArea: "1 / 2 / -1 / -1", pt: "60px" }}>
         <div style={{ height: "calc(100vh - 60px)", overflowY: "auto" }}>
-                <Suspense>
-          <Outlet />
-        </Suspense>
+          <Suspense>
+            <Outlet />
+          </Suspense>
         </div>
       </Box>
     </Fragment>
