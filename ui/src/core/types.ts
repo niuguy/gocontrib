@@ -26,4 +26,15 @@ export interface Repository {
 }
 
 
+export interface Task {
+  id: number;
+  issue_id: number;
+  issue_title: string;
+  issue_repo_owner: string;
+  issue_repo_name: string;
+  issue_url: string;
+  status: string;
+  note: string;
+}
+
   

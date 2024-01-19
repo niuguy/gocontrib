@@ -28,7 +28,7 @@ export const Component = function Issues(): JSX.Element {
   const queryParams = new URLSearchParams(location.search);
   const label = queryParams.get("label");
   const [refreshCounter, setRefreshCounter] = useAtom(refreshCounterAtom);
-
+  console.log("repo_name", repo_name, "repo_owner", repo_owner);
   const checkFollowStatus = async () => {
     setIsLoading(true);
     try {
@@ -107,6 +107,7 @@ export const Component = function Issues(): JSX.Element {
   const submitTask = async (issue: Issue) => {
     try {
       await apiClient.post("/tasks", {
+        issue_id: issue.github_id,
         issue_title: issue.title,
         issue_url: issue.url,
         issue_repo_name: repo_name,
@@ -127,7 +128,12 @@ export const Component = function Issues(): JSX.Element {
         key="helpwanted"
         disabled={false}
         size="lg"
-        slotProps={{ action: { component: 'a', href: `/issues/${repo_owner}/${repo_name}?label=help%20wanted` } }}
+        slotProps={{
+          action: {
+            component: "a",
+            href: `/issues/${repo_owner}/${repo_name}?label=help%20wanted`,
+          },
+        }}
       >
         Help Wanted
       </Chip>

@@ -16,15 +16,6 @@ import { BaseLayout, MainLayout, RootError } from "../components";
 export const router = createBrowserRouter([
   {
     path: "",
-    element: <BaseLayout />,
-    errorElement: <RootError />,
-    children: [
-      { path: "privacy", lazy: () => import("./privacy") },
-      { path: "terms", lazy: () => import("./terms") },
-    ],
-  },
-  {
-    path: "",
     element: <MainLayout />,
     errorElement: <RootError />,
     children: [
@@ -32,7 +23,6 @@ export const router = createBrowserRouter([
       { path: "explore", lazy: () => import("./explore") },
       { path: "repos", lazy: () => import("./repos") },
       { path: "tasks", lazy: () => import("./tasks") },
-      { path: "prs", lazy: () => import("./prs") },
       { path: "issues/:repo_owner/:repo_name", lazy: () => import("./issues") },
     ],
   },

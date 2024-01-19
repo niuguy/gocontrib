@@ -114,6 +114,7 @@ export const Component = function Repos(): JSX.Element {
                 <Typography gutterBottom>
                   Open Issues: {repo.open_issues}
                 </Typography>
+
                 <Button onClick={() => doFollow(repo)} sx={{ mt: 2 }}>
                   Follow
                 </Button>

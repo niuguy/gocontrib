@@ -3,16 +3,6 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 
-interface Repo {
-  id: number;
-  github_id: number;
-  owner: string;
-  name: string;
-  description: string;
-  openIssues: number;
-  stars: number;
-}
-
 export const Component = function Explore(): JSX.Element {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedLanguage, _setSelectedLanguage] = useState("");

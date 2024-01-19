@@ -1,30 +1,15 @@
-/* SPDX-FileCopyrightText: 2014-present Kriasoft */
-/* SPDX-License-Identifier: MIT */
-
 import { Container, Typography } from "@mui/joy";
 import Table from "@mui/joy/Table";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import apiClient from "../apis/client";
-
-interface Task {
-  doc_id: string;
-  issue_id: string;
-  issue_title: string;
-  issue_url: string;
-  note: string;
-  repo_name: string;
-  repo_owner: string;
-  status: string;
-  uid: string;
-}
+import { Task } from "../core/types";
+import { Fragment } from "react";
 
 export const Component = function Tasks(): JSX.Element {
   const queryClient = useQueryClient();
 
   const fetchTasks = async (): Promise<Task[]> => {
     const _tasks = await apiClient.get("/tasks");
-    //map to the tasks object
-    console.log(_tasks.data);
     return _tasks.data;
   };
 
@@ -36,7 +21,7 @@ export const Component = function Tasks(): JSX.Element {
 
   // Group tasks by repo_owner and repo_name
   const groupedTasks = tasks?.reduce<Record<string, Task[]>>((acc, task) => {
-    const key = `${task.repo_owner}/${task.repo_name}`;
+    const key = `${task.issue_repo_owner}/${task.issue_repo_name}`;
     if (!acc[key]) {
       acc[key] = [];
     }
@@ -52,7 +37,7 @@ export const Component = function Tasks(): JSX.Element {
     return <Typography>Error fetching tasks</Typography>;
   }
 
-  const handleStatusChange = async (docId: string, newStatus: string) => {
+  const handleStatusChange = async (docId: number, newStatus: string) => {
     try {
       // // Reference to the specific task document in Firestore
       // const taskRef = doc(db, "tasks", docId);
@@ -74,61 +59,64 @@ export const Component = function Tasks(): JSX.Element {
   return (
     <Container sx={{ py: 2 }}>
       {groupedTasks && Object.keys(groupedTasks).length > 0 ? (
-        Object.entries(groupedTasks).map(([key, tasks]) => {
-          const [repo_owner, repo_name] = key.split("/");
-          const repoUrl = `https://github.com/${repo_owner}/${repo_name}/issues`;
-          return (
-            <div key={key} style={{ marginBottom: "30px" }}>
-              <Typography level="h3" gutterBottom>
-                <a href={repoUrl} target="_blank" rel="noreferrer">
-                  {key}
-                </a>
-              </Typography>
-              <Table
-                aria-label={`${key} tasks table`}
-                style={{ width: "100%", tableLayout: "fixed" }}
-              >
-                <thead>
-                  <tr>
-                    <th style={{ width: "10%" }}>Issue ID</th>
-                    <th>Issue Title</th>
-                    <th style={{ width: "20%" }}>Status</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {tasks.map((task) => (
-                    <tr key={task.issue_id}>
-                      <td>{task.issue_id}</td>
-                      <td>
-                        <a
-                          href={task.issue_url}
-                          target="_blank"
-                          rel="noreferrer"
-                        >
-                          {task.issue_title}
-                        </a>
-                      </td>
-                      <td>
-                        <select
-                          value={task.status}
-                          onChange={(e) =>
-                            handleStatusChange(task.doc_id, e.target.value)
-                          }
-                          aria-label="Change Task Status"
-                        >
-                          <option value="TODO">To Do</option>
-                          <option value="INPROGRESS">In Progress</option>
-                          <option value="DONE">Done</option>
-                          <option value="CLOSED">Closed</option>
-                        </select>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </Table>
-            </div>
-          );
-        })
+        <Table
+          aria-label="Tasks table"
+          style={{ width: "100%", tableLayout: "fixed" }}
+        >
+          <thead>
+            <tr>
+              <th style={{ width: "10%"}}>Repository</th>
+              <th>Issue</th>
+              <th style={{ width: "10%"}}>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {Object.entries(groupedTasks).map(([key, tasks], groupIndex) => {
+              const [repo_owner, repo_name] = key.split("/");
+              const repoUrl = `https://github.com/${repo_owner}/${repo_name}`;
+
+              return tasks.map((task, index) => (
+                <tr
+                  key={task.issue_id}
+                  style={{
+                    backgroundColor: groupIndex % 2 ? "#f7f7f7" : "white",
+                  }}
+                >
+                  <td>
+                    {index === 0 && (
+                      <a href={repoUrl} target="_blank" rel="noreferrer" style={{ fontWeight: 'bold' }}>
+                        {repo_owner}/{repo_name}
+                      </a>
+                    )}
+                  </td>
+                  <td>
+                    <a
+                      href={task.issue_url}
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      {task.issue_title}
+                    </a>
+                  </td>
+                  <td>
+                    <select
+                      value={task.status}
+                      onChange={(e) =>
+                        handleStatusChange(task.id, e.target.value)
+                      }
+                      aria-label="Change Task Status"
+                    >
+                      <option value="TODO">To Do</option>
+                      <option value="INPROGRESS">In Progress</option>
+                      <option value="DONE">Done</option>
+                      <option value="CLOSED">Closed</option>
+                    </select>
+                  </td>
+                </tr>
+              ));
+            })}
+          </tbody>
+        </Table>
       ) : (
         <Typography>No tasks found.</Typography>
       )}
