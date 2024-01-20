@@ -7,7 +7,7 @@ import {
   Navigate,
   RouterProvider,
 } from "react-router-dom";
-import { BaseLayout, MainLayout, RootError } from "../components";
+import { MainLayout, RootError } from "../components";
 
 /**
  * Application routes

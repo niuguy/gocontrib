@@ -6,7 +6,7 @@ ui:
 	cd ui && pnpm run build
 
 app:
-	go build -o bin/gocrontrib main.go
+	GIN_MODE=release go build -o bin/gocrontrib main.go
 
 run:
 	go run main.go

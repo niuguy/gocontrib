@@ -6,6 +6,7 @@ import {
   Snackbar,
   Typography,
   Chip,
+  IconButton,
 } from "@mui/joy";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { useState, Fragment, useEffect } from "react";
@@ -16,6 +17,9 @@ import apiClient from "../apis/client";
 import { Issue } from "../core/types";
 import { useAtom } from "jotai";
 import { refreshCounterAtom } from "../core/store";
+import FavoriteIcon from "@mui/icons-material/Favorite";
+import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
+import OpenInNewIcon from "@mui/icons-material/OpenInNew";
 
 export const Component = function Issues(): JSX.Element {
   const [isFollowing, setIsFollowing] = useState(false);
@@ -94,7 +98,7 @@ export const Component = function Issues(): JSX.Element {
   } = useInfiniteQuery({
     queryKey: ["issues", label],
     queryFn: fetchIssues,
-    getNextPageParam: (lastPage, pages) => {
+    getNextPageParam: (pages) => {
       return pages.length + 1;
     },
     initialPageParam: 1,
@@ -123,56 +127,98 @@ export const Component = function Issues(): JSX.Element {
   };
 
   return (
-    <Container sx={{ py: 2, position: "relative" }}>
-      <Chip
-        key="helpwanted"
-        disabled={false}
-        size="lg"
-        slotProps={{
-          action: {
-            component: "a",
-            href: `/issues/${repo_owner}/${repo_name}?label=help%20wanted`,
-          },
-        }}
-      >
-        Help Wanted
-      </Chip>
+    <Container sx={{ py: 2 }}>
+      <Box sx={{ display: "flex", alignItems: "center", mb: 1 }}>
+        <Typography level="h2" gutterBottom sx={{ mr: 2 }}>
+          {repo_owner}/{repo_name}
+        </Typography>
+        <IconButton
+          onClick={handleFollowClick}
+          disabled={isLoading}
+          sx={{ color: isFollowing ? "error" : "inherit" }}
+        >
+          {isFollowing ? <FavoriteIcon /> : <FavoriteBorderIcon />}
+        </IconButton>
+      </Box>
+      <Box sx={{ mb: 2 }}>
+        <Chip
+          key="helpwanted"
+          disabled={false}
+          size="lg"
+          sx={{
+            backgroundColor: "secondary.light",
+            color: "green",
+            ":hover": { backgroundColor: "secondary.dark" },
+          }}
+          slotProps={{
+            action: {
+              component: "a",
+              href: `/issues/${repo_owner}/${repo_name}?label=help%20wanted`,
+            },
+          }}
+        >
+          Help Wanted
+        </Chip>
 
-      <Button
-        sx={{
-          position: "absolute",
-          top: 0,
-          right: 0,
-          color: isFollowing ? "primary" : "secondary",
-        }}
-        onClick={handleFollowClick}
-        disabled={isLoading}
-      >
-        {isFollowing ? "Unfollow" : "Follow"}
-      </Button>
-      <Typography level="h2" gutterBottom>
-        {repo_owner}/{repo_name} Issues
-      </Typography>
+        <Chip
+          key="helpwanted"
+          disabled={false}
+          size="lg"
+          sx={{
+            backgroundColor: "secondary.light",
+            color: "chocolate",
+            ":hover": { backgroundColor: "secondary.dark" },
+          }}
+          slotProps={{
+            action: {
+              component: "a",
+              href: `/issues/${repo_owner}/${repo_name}?label=good%20first%20issue`,
+            },
+          }}
+        >
+          Good First Issue
+        </Chip>
+      </Box>
+
       <Box sx={{ width: "100%", py: 2, overflowY: "auto" }}>
         {issues?.pages?.map((group, i) => (
           <Fragment key={i}>
             {group.map((issue: Issue) => (
               <Card key={issue.github_id} sx={{ mb: 2, p: 2 }}>
-                <a href={issue.url} target="_blank">
-                  {issue.title}
-                </a>
-                {issue.labels?.map((label, i) => (
-                  <Chip key={i} disabled={false}>
-                    {label}
-                  </Chip>
-                ))}
-                <Button onClick={() => submitTask(issue)}>Add Task</Button>
+                <Box
+                  sx={{ display: "flex", alignItems: "center", gap: 0, mb: 1 }}
+                >
+                  <a
+                    href={issue.url}
+                    target="_blank"
+                  >
+                    {issue.title}
+                    <OpenInNewIcon fontSize="small" />
+                  </a>
+                </Box>
+
+                <Box
+                  sx={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                  }}
+                >
+                  <Box sx={{ display: "flex", gap: 1, flexWrap: "wrap" }}>
+                    {issue.labels?.map((label, i) => (
+                      <Chip key={i} disabled={false}>
+                        {label}
+                      </Chip>
+                    ))}
+                  </Box>
+                  <Button onClick={() => submitTask(issue)}>Add Task</Button>
+                </Box>
               </Card>
             ))}
           </Fragment>
         ))}
-        <div>
-          <button
+        <Box sx={{ display: "flex", justifyContent: "center", mt: 2 }}>
+          <Button
             onClick={() => fetchNextPage()}
             disabled={!hasNextPage || isFetchingNextPage}
           >
@@ -181,14 +227,18 @@ export const Component = function Issues(): JSX.Element {
               : hasNextPage
               ? "Load More"
               : "Nothing more to load"}
-          </button>
-        </div>
-        <div>{isFetching && !isFetchingNextPage ? "Fetching..." : null}</div>
+          </Button>
+        </Box>
+        <Box sx={{ textAlign: "center", mt: 1 }}>
+          {isFetching && !isFetchingNextPage ? "Fetching..." : null}
+        </Box>
       </Box>
+
       <Snackbar
         open={openSnackbar}
         autoHideDuration={6000}
         onClose={handleCloseSnackbar}
+        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
       >
         {successMessage || errorMessage}
       </Snackbar>

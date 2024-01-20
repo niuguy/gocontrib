@@ -1,9 +1,10 @@
-import { Container, Typography, Button } from "@mui/joy";
+import DeleteIcon from "@mui/icons-material/Delete";
+import { Container, Typography } from "@mui/joy";
 import Table from "@mui/joy/Table";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import apiClient from "../apis/client";
 import { Task } from "../core/types";
-import DeleteIcon from "@mui/icons-material/Delete";
+import OpenInNewIcon from "@mui/icons-material/OpenInNew";
 
 export const Component = function Tasks(): JSX.Element {
   const queryClient = useQueryClient();
@@ -71,7 +72,7 @@ export const Component = function Tasks(): JSX.Element {
           <thead>
             <tr>
               <th style={{ width: "10%" }}>Repository</th>
-              <th>Issue</th>
+              <th>Task Issue</th>
               <th style={{ width: "10%" }}>Action</th>
             </tr>
           </thead>
@@ -79,6 +80,7 @@ export const Component = function Tasks(): JSX.Element {
             {Object.entries(groupedTasks).map(([key, tasks], groupIndex) => {
               const [repo_owner, repo_name] = key.split("/");
               const repoUrl = `https://github.com/${repo_owner}/${repo_name}`;
+              const internalUrl = `/issues/${repo_owner}/${repo_name}`;
 
               return tasks.map((task, index) => (
                 <tr
@@ -89,22 +91,43 @@ export const Component = function Tasks(): JSX.Element {
                 >
                   <td>
                     {index === 0 && (
-                      <a
-                        href={repoUrl}
-                        target="_blank"
-                        rel="noreferrer"
-                        style={{ fontWeight: "bold" }}
+                      <div
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                          gap: "5px",
+                        }}
                       >
-                        {repo_name}
-                      </a>
+                        <a
+                          href={internalUrl}
+                          target="_blank"
+                          rel="noreferrer"
+                          style={{ fontWeight: "bold" }}
+                        >
+                          {repo_name}
+                        </a>
+                        <a href={repoUrl} target="_blank" rel="noreferrer">
+                          <OpenInNewIcon fontSize="small" />
+                        </a>
+                      </div>
                     )}
                   </td>
                   <td>
                     <a href={task.issue_url} target="_blank" rel="noreferrer">
                       {task.issue_title}
                     </a>
+                    <a href={task.issue_url} target="_blank" rel="noreferrer">
+                      <OpenInNewIcon fontSize="small" />
+                    </a>
                   </td>
-                  <td>
+                  <td
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "space-between",
+                      gap: "10px",
+                    }}
+                  >
                     <select
                       value={task.status}
                       onChange={(e) => handleStatusChange(task, e.target.value)}

@@ -59,7 +59,7 @@ export const Component = function Repos(): JSX.Element {
   } = useInfiniteQuery({
     queryKey: ["repos"],
     queryFn: fetchRepos,
-    getNextPageParam: (lastPage, pages) => {
+    getNextPageParam: (pages) => {
       return pages.length + 1;
     },
     initialPageParam: 1,

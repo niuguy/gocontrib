@@ -51,8 +51,6 @@ func bindUI(engine *gin.Engine) {
 	fileServer := http.FileServer(http.FS(dist))
 
 	engine.Use(func(c *gin.Context) {
-		fmt.Println("Request URL:", c.Request.URL.Path)
-
 		if !strings.HasPrefix(c.Request.URL.Path, "/api") {
 			// Check if the requested file exists
 			_, err := fs.Stat(dist, strings.TrimPrefix(c.Request.URL.Path, "/"))
