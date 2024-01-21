@@ -30,6 +30,7 @@ func NewServer(s *storage.Storage) *Server {
 
 	engine.Use(cors.New(config))
 
+	fmt.Println("GITHUB_TOKEN: ", os.Getenv("GITHUB_TOKEN"))
 	ghClient := NewGitHubClient(os.Getenv("GITHUB_TOKEN"))
 
 	// serve api

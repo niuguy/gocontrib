@@ -6,7 +6,7 @@ import apiClient from "../apis/client";
 import { Task } from "../core/types";
 import OpenInNewIcon from "@mui/icons-material/OpenInNew";
 import { Fragment, useState } from "react";
-import EditNoteIcon from '@mui/icons-material/EditNote';
+import EditNoteIcon from "@mui/icons-material/EditNote";
 
 export const Component = function Tasks(): JSX.Element {
   const queryClient = useQueryClient();
@@ -22,12 +22,21 @@ export const Component = function Tasks(): JSX.Element {
     setDrawerState(open);
   };
 
-  const handleNoteUpdate = (e) => {
-    if (selectedTask) {
-      selectedTask.note = e.target.value;
-    }
-    console.log(selectedTask);
+  const handleNoteUpdate = () => {
+    const result = apiClient.put(`/tasks/${selectedTask!.id}`, selectedTask);
+    result.then(
+      (res) => {
+        if (res.status === 200) {
+          queryClient.invalidateQueries();
+          window.location.reload(); // Refresh the page
+        }
+      },
 
+      (error) => {
+        console.log("error:", error);
+      }
+    );
+    setDrawerState(false);
   };
 
   const fetchTasks = async (): Promise<Task[]> => {
@@ -84,22 +93,19 @@ export const Component = function Tasks(): JSX.Element {
   };
 
   const drawer = (
-    <Box
-      role="presentation"
-    >
-    {/* <Typography >{selectedTask?.issue_title}</Typography> */}
-    <Typography>Add/Edit Note</Typography>
-    <Textarea
-      defaultValue={selectedTask ? selectedTask.note : ""}
-      minRows={10}
-      sx={{ width: "100%", mt: 2, mx: 1}}
-    />
-    <Button
-      onClick={handleNoteUpdate} // Call a function to handle the submit action
-      sx={{ mt: 2 }}
-    >
-      Update
-    </Button>
+    <Box role="presentation">
+      <Typography>Add/Edit Note</Typography>
+      <Textarea
+        defaultValue={selectedTask ? selectedTask.note : ""}
+        minRows={10}
+        sx={{ width: "100%", mt: 2, mx: 1 }}
+        onChange={(e) => {
+          selectedTask!.note = e.target.value;
+        }}
+      />
+      <Button onClick={handleNoteUpdate} sx={{ mt: 2 }}>
+        Update
+      </Button>
     </Box>
   );
 
@@ -168,7 +174,6 @@ export const Component = function Tasks(): JSX.Element {
                         style={{ cursor: "pointer", fontSize: "inherit" }} // Makes the icon look clickable
                         onClick={() => handleNoteClick(task)}
                       />
-                          
                     </td>
                     <td
                       style={{
