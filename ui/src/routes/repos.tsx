@@ -1,4 +1,4 @@
-import { Box, Button, Card, Container, Snackbar, Typography } from "@mui/joy";
+import { Box, Button, Card, Container, Snackbar, Typography, IconButton } from "@mui/joy";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { Fragment, useState } from "react";
 import {  useLocation } from "react-router-dom";
@@ -6,18 +6,9 @@ import { useAtom } from "jotai";
 
 import apiClient from "../apis/client";
 import { refreshCounterAtom } from "../core/store";
+import FavoriteIcon from "@mui/icons-material/Favorite";
 
-interface Repository {
-  github_id: number;
-  owner: string;
-  name: string;
-  description: string;
-  stars: number;
-  open_issues: number;
-  help_wanted_issues: number;
-  language: string;
-  starred: boolean;
-}
+import { Repository } from "../core/types";
 export const Component = function Repos(): JSX.Element {
   const [successMessage, setSuccessMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
@@ -97,7 +88,7 @@ export const Component = function Repos(): JSX.Element {
   return (
     <Container sx={{ py: 2 }}>
       <Typography level="h2" gutterBottom>
-        Repos of search for '{searchTerm}' {language}
+        Repositories 
       </Typography>
       <Box sx={{ width: "100%", py: 2, overflowY: "auto" }}>
         {repos?.pages?.map((group, i) => (
@@ -105,19 +96,13 @@ export const Component = function Repos(): JSX.Element {
             {group.map((repo: Repository) => (
               <Card key={repo.github_id} sx={{ p: 2, my: 2 }}>
                 <Typography level="h3" gutterBottom>
-                  {repo.owner}/{repo.name}
+                  {repo.owner}/{repo.name} 
                 </Typography>
-                <Typography gutterBottom>{repo.description}</Typography>
-                <Typography gutterBottom><a href={`/issues/${repo.owner}/${repo.name}`}>issues</a></Typography>
-                <Typography gutterBottom>Language: {repo.language}</Typography>
-                <Typography gutterBottom>Stars: {repo.stars}</Typography>
+                <Typography >{repo.description}</Typography>  
                 <Typography gutterBottom>
-                  Open Issues: {repo.open_issues}
+                  <a href={`/issues/${repo.owner}/${repo.name}`}> Open Issues({repo.open_issues})</a>
                 </Typography>
 
-                <Button onClick={() => doFollow(repo)} sx={{ mt: 2 }}>
-                  Follow
-                </Button>
               </Card>
             ))}
           </Fragment>

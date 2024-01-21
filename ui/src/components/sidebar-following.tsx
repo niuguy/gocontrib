@@ -64,7 +64,9 @@ export function Following(): JSX.Element {
         aria-labelledby="nav-list-tags"
         size="sm"
         sx={{
-          "--ListItemDecorator-size": "32px",
+          "--ListItemDecorator-size": "40px",
+          height: '600px',
+          "overflowY": 'auto'
         }}
       >
         {followings?.map((repo) => (

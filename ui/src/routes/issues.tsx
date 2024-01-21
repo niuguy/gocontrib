@@ -149,6 +149,7 @@ export const Component = function Issues(): JSX.Element {
             backgroundColor: "secondary.light",
             color: "green",
             ":hover": { backgroundColor: "secondary.dark" },
+            marginRight: "10px",
           }}
           slotProps={{
             action: {

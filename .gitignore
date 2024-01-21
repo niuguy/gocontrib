@@ -8,12 +8,10 @@
 /_output/
 /bin/
 /vendor/
-/go.sum
 
 # Dependency directories
 /vendor/
-/go.sum
-/go.mod
+
 
 # Testing binary, build directory
 /test/

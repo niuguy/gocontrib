@@ -1,13 +1,34 @@
 import DeleteIcon from "@mui/icons-material/Delete";
-import { Container, Typography } from "@mui/joy";
+import { Container, Typography, Drawer, Box, Textarea, Button } from "@mui/joy";
 import Table from "@mui/joy/Table";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import apiClient from "../apis/client";
 import { Task } from "../core/types";
 import OpenInNewIcon from "@mui/icons-material/OpenInNew";
+import { Fragment, useState } from "react";
+import EditNoteIcon from '@mui/icons-material/EditNote';
 
 export const Component = function Tasks(): JSX.Element {
   const queryClient = useQueryClient();
+
+  const [drawerState, setDrawerState] = useState(false);
+  const [selectedTask, setSelectedTask] = useState(null as Task | null);
+
+  const handleNoteClick = (task: Task) => {
+    setSelectedTask(task);
+    setDrawerState(true);
+  };
+  const toggleDrawer = (open: boolean) => () => {
+    setDrawerState(open);
+  };
+
+  const handleNoteUpdate = (e) => {
+    if (selectedTask) {
+      selectedTask.note = e.target.value;
+    }
+    console.log(selectedTask);
+
+  };
 
   const fetchTasks = async (): Promise<Task[]> => {
     const _tasks = await apiClient.get("/tasks");
@@ -62,96 +83,132 @@ export const Component = function Tasks(): JSX.Element {
     }
   };
 
-  return (
-    <Container sx={{ py: 2 }}>
-      {groupedTasks && Object.keys(groupedTasks).length > 0 ? (
-        <Table
-          aria-label="Tasks table"
-          style={{ width: "100%", tableLayout: "fixed" }}
-        >
-          <thead>
-            <tr>
-              <th style={{ width: "10%" }}>Repository</th>
-              <th>Task Issue</th>
-              <th style={{ width: "10%" }}>Action</th>
-            </tr>
-          </thead>
-          <tbody>
-            {Object.entries(groupedTasks).map(([key, tasks], groupIndex) => {
-              const [repo_owner, repo_name] = key.split("/");
-              const repoUrl = `https://github.com/${repo_owner}/${repo_name}`;
-              const internalUrl = `/issues/${repo_owner}/${repo_name}`;
+  const drawer = (
+    <Box
+      role="presentation"
+    >
+    {/* <Typography >{selectedTask?.issue_title}</Typography> */}
+    <Typography>Add/Edit Note</Typography>
+    <Textarea
+      defaultValue={selectedTask ? selectedTask.note : ""}
+      minRows={10}
+      sx={{ width: "100%", mt: 2, mx: 1}}
+    />
+    <Button
+      onClick={handleNoteUpdate} // Call a function to handle the submit action
+      sx={{ mt: 2 }}
+    >
+      Update
+    </Button>
+    </Box>
+  );
 
-              return tasks.map((task, index) => (
-                <tr
-                  key={task.issue_id}
-                  style={{
-                    backgroundColor: groupIndex % 2 ? "#f7f7f7" : "white",
-                  }}
-                >
-                  <td>
-                    {index === 0 && (
-                      <div
-                        style={{
-                          display: "flex",
-                          alignItems: "center",
-                          gap: "5px",
-                        }}
-                      >
-                        <a
-                          href={internalUrl}
-                          target="_blank"
-                          rel="noreferrer"
-                          style={{ fontWeight: "bold" }}
-                        >
-                          {repo_name}
-                        </a>
-                        <a href={repoUrl} target="_blank" rel="noreferrer">
-                          <OpenInNewIcon fontSize="small" />
-                        </a>
-                      </div>
-                    )}
-                  </td>
-                  <td>
-                    <a href={task.issue_url} target="_blank" rel="noreferrer">
-                      {task.issue_title}
-                    </a>
-                    <a href={task.issue_url} target="_blank" rel="noreferrer">
-                      <OpenInNewIcon fontSize="small" />
-                    </a>
-                  </td>
-                  <td
+  return (
+    <Fragment>
+      <Container sx={{ py: 2 }}>
+        {groupedTasks && Object.keys(groupedTasks).length > 0 ? (
+          <Table
+            aria-label="Tasks table"
+            style={{ width: "100%", tableLayout: "fixed" }}
+          >
+            <thead>
+              <tr>
+                <th style={{ width: "10%" }}>Repository</th>
+                <th>Task Issue</th>
+                <th style={{ width: "10%" }}>Note</th>
+                <th style={{ width: "10%" }}>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              {Object.entries(groupedTasks).map(([key, tasks], groupIndex) => {
+                const [repo_owner, repo_name] = key.split("/");
+                const repoUrl = `https://github.com/${repo_owner}/${repo_name}`;
+                const internalUrl = `/issues/${repo_owner}/${repo_name}`;
+
+                return tasks.map((task, index) => (
+                  <tr
+                    key={task.issue_id}
                     style={{
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "space-between",
-                      gap: "10px",
+                      backgroundColor: groupIndex % 2 ? "#f7f7f7" : "white",
                     }}
                   >
-                    <select
-                      value={task.status}
-                      onChange={(e) => handleStatusChange(task, e.target.value)}
-                      aria-label="Change Task Status"
+                    <td>
+                      {index === 0 && (
+                        <div
+                          style={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: "5px",
+                          }}
+                        >
+                          <a
+                            href={internalUrl}
+                            target="_blank"
+                            rel="noreferrer"
+                            style={{ fontWeight: "bold" }}
+                          >
+                            {repo_name}
+                          </a>
+                          <a href={repoUrl} target="_blank" rel="noreferrer">
+                            <OpenInNewIcon fontSize="small" />
+                          </a>
+                        </div>
+                      )}
+                    </td>
+                    <td>
+                      <a href={task.issue_url} target="_blank" rel="noreferrer">
+                        {task.issue_title}
+                      </a>
+                      <a href={task.issue_url} target="_blank" rel="noreferrer">
+                        <OpenInNewIcon fontSize="small" />
+                      </a>
+                    </td>
+                    <td>
+                      <EditNoteIcon
+                        style={{ cursor: "pointer", fontSize: "inherit" }} // Makes the icon look clickable
+                        onClick={() => handleNoteClick(task)}
+                      />
+                          
+                    </td>
+                    <td
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "space-between",
+                        gap: "10px",
+                      }}
                     >
-                      <option value="TODO">To Do</option>
-                      <option value="INPROGRESS">In Progress</option>
-                      <option value="DONE">Done</option>
-                      <option value="CLOSED">Closed</option>
-                    </select>
+                      <select
+                        value={task.status}
+                        onChange={(e) =>
+                          handleStatusChange(task, e.target.value)
+                        }
+                        aria-label="Change Task Status"
+                      >
+                        <option value="TODO">To Do</option>
+                        <option value="INPROGRESS">In Progress</option>
+                        <option value="DONE">Done</option>
+                        <option value="CLOSED">Closed</option>
+                      </select>
 
-                    <DeleteIcon
-                      style={{ cursor: "pointer" }} // Makes the icon look clickable
-                      onClick={() => handleDeleteClick(task.id)}
-                    />
-                  </td>
-                </tr>
-              ));
-            })}
-          </tbody>
-        </Table>
-      ) : (
-        <Typography>No tasks found.</Typography>
-      )}
-    </Container>
+                      <DeleteIcon
+                        style={{ cursor: "pointer", fontSize: "inherit" }} // Makes the icon look clickable
+                        onClick={() => handleDeleteClick(task.id)}
+                      />
+                    </td>
+                  </tr>
+                ));
+              })}
+            </tbody>
+          </Table>
+        ) : (
+          <Typography>No tasks found.</Typography>
+        )}
+
+        <Drawer anchor="right" open={drawerState} onClose={toggleDrawer(false)}>
+          {drawer}
+        </Drawer>
+      </Container>
+    </Fragment>
   );
 };
