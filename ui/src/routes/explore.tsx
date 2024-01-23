@@ -56,8 +56,13 @@ export const Component = function Explore(): JSX.Element {
           sx={{ "--Input-decoratorChildHeight": "45px", width: "60%" }}
           type="text"
           placeholder="Search repositories..."
-          value={searchTerm} // Bind the input to the searchTerm state
-          onChange={(e) => setSearchTerm(e.target.value)} // Update the state on input change
+          value={searchTerm} 
+          onChange={(e) => setSearchTerm(e.target.value)} 
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' && searchTerm.trim()) {
+              handleSearch();
+            }
+          }} 
           endDecorator={
             <Button
               variant="solid"
@@ -103,6 +108,7 @@ export const Component = function Explore(): JSX.Element {
           </Chip>
         ))}
       </Box>
+
     </Container>
   );
 };

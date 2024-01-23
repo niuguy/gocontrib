@@ -1,12 +1,12 @@
 import DeleteIcon from "@mui/icons-material/Delete";
-import { Container, Typography, Drawer, Box, Textarea, Button } from "@mui/joy";
+import EditNoteIcon from "@mui/icons-material/EditNote";
+import OpenInNewIcon from "@mui/icons-material/OpenInNew";
+import { Box, Button, Container, Drawer, Textarea, Typography } from "@mui/joy";
 import Table from "@mui/joy/Table";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { Fragment, useState } from "react";
 import apiClient from "../apis/client";
 import { Task } from "../core/types";
-import OpenInNewIcon from "@mui/icons-material/OpenInNew";
-import { Fragment, useState } from "react";
-import EditNoteIcon from "@mui/icons-material/EditNote";
 
 export const Component = function Tasks(): JSX.Element {
   const queryClient = useQueryClient();
@@ -93,17 +93,47 @@ export const Component = function Tasks(): JSX.Element {
   };
 
   const drawer = (
-    <Box role="presentation">
-      <Typography>Add/Edit Note</Typography>
+    <Box
+      role="presentation"
+      sx={{
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center", // Centers the content horizontally
+        justifyContent: "center", // Centers the content vertically
+        gap: 2, // Adds gap between each child element
+        width: "100%", // Ensures the box takes full width
+        mt: 2, // Adds margin at the top for spacing
+      }}
+    >
+      <Typography
+        sx={{
+          textAlign: "center", // Centers the text within Typography
+          width: "100%", // Ensures Typography takes full width of the parent
+        }}
+      >
+        {selectedTask?.issue_title}
+      </Typography>
+
       <Textarea
         defaultValue={selectedTask ? selectedTask.note : ""}
-        minRows={10}
-        sx={{ width: "100%", mt: 2, mx: 1 }}
+        placeholder="Add a note..."
+        minRows={20}
+        sx={{
+          width: "90%",
+          mx: 2, // Adjusts horizontal margin if needed
+        }}
         onChange={(e) => {
           selectedTask!.note = e.target.value;
         }}
       />
-      <Button onClick={handleNoteUpdate} sx={{ mt: 2 }}>
+
+      <Button
+        onClick={handleNoteUpdate}
+        sx={{
+          mt: 2, // Adjusts top margin for the button
+          width: "fit-content", // Adjusts button width to fit its content
+        }}
+      >
         Update
       </Button>
     </Box>

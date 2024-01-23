@@ -1,14 +1,15 @@
-import { Box, Button, Card, Container, Snackbar, Typography, IconButton } from "@mui/joy";
+import { Box, Button, Card, Container, Snackbar, Typography } from "@mui/joy";
 import { useInfiniteQuery } from "@tanstack/react-query";
-import { Fragment, useState } from "react";
-import {  useLocation } from "react-router-dom";
 import { useAtom } from "jotai";
+import { Fragment, useState } from "react";
+import { useLocation } from "react-router-dom";
 
 import apiClient from "../apis/client";
 import { refreshCounterAtom } from "../core/store";
-import FavoriteIcon from "@mui/icons-material/Favorite";
+import StarIcon from '@mui/icons-material/Star';
 
 import { Repository } from "../core/types";
+import Star from "@mui/icons-material/Star";
 export const Component = function Repos(): JSX.Element {
   const [successMessage, setSuccessMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
@@ -32,7 +33,7 @@ export const Component = function Repos(): JSX.Element {
     if (searchTerm) {
       _params.q = searchTerm;
     }
-    _params.count = 10;
+    _params.count = 20;
 
     const repos = await apiClient.get("/github/repo/search", {
       params: _params,
@@ -60,35 +61,10 @@ export const Component = function Repos(): JSX.Element {
     setOpenSnackbar(false);
   };
 
-  const doFollow = async (repo: Repository) => {
-    try {
-      await apiClient.post("/repo", {
-        github_id: repo.github_id,
-        owner: repo.owner,
-        name: repo.name,
-        description: repo.description,
-        stars: repo.stars,
-        open_issues: repo.open_issues,
-        help_wanted_issues: repo.help_wanted_issues,
-        language: repo.language,
-        starred: repo.starred,
-      });
-
-      setRefreshCounter(refreshCounter + 1);
-      
-      setSuccessMessage(" Submitted successfully!");
-      setOpenSnackbar(true);
-    } catch (error) {
-      console.error("Error submitting task:", error);
-      setErrorMessage("Failed to submit task.");
-      setOpenSnackbar(true);
-    }
-  };
-
   return (
     <Container sx={{ py: 2 }}>
       <Typography level="h2" gutterBottom>
-        Repositories 
+        Repositories
       </Typography>
       <Box sx={{ width: "100%", py: 2, overflowY: "auto" }}>
         {repos?.pages?.map((group, i) => (
@@ -96,19 +72,25 @@ export const Component = function Repos(): JSX.Element {
             {group.map((repo: Repository) => (
               <Card key={repo.github_id} sx={{ p: 2, my: 2 }}>
                 <Typography level="h3" gutterBottom>
-                  {repo.owner}/{repo.name} 
+                  {repo.owner}/{repo.name}  {" "}  <Typography level='body-md'>
+                  <StarIcon/> {repo.stars}
                 </Typography>
-                <Typography >{repo.description}</Typography>  
+                </Typography>
+               
+              
+                <Typography>{repo.description}</Typography>
                 <Typography gutterBottom>
-                  <a href={`/issues/${repo.owner}/${repo.name}`}> Open Issues({repo.open_issues})</a>
+                  <a href={`/issues/${repo.owner}/${repo.name}`}>
+                    {" "}
+                    Open Issues({repo.open_issues})
+                  </a>
                 </Typography>
-
               </Card>
             ))}
           </Fragment>
         ))}
-        <div>
-          <button
+        <Box sx={{ display: "flex", justifyContent: "center", mt: 2 }}>
+          <Button
             onClick={() => fetchNextPage()}
             disabled={!hasNextPage || isFetchingNextPage}
           >
@@ -117,9 +99,11 @@ export const Component = function Repos(): JSX.Element {
               : hasNextPage
               ? "Load More"
               : "Nothing more to load"}
-          </button>
-        </div>
-        <div>{isFetching && !isFetchingNextPage ? "Fetching..." : null}</div>
+          </Button>
+        </Box>
+        <Box sx={{ textAlign: "center", mt: 1 }}>
+          {isFetching && !isFetchingNextPage ? "Fetching..." : null}
+        </Box>
       </Box>
       <Snackbar
         open={openSnackbar}

@@ -7,9 +7,9 @@ export interface Issue {
     commentsCount: number; // int in Go
     isAssigned: boolean;
     labels: string[];
-    isGoodFirst: boolean;
-    isHelpWanted: boolean;
-    gitHubCreatedAt: string; // ISO 8601 date string, equivalent to time.Time
+    is_good_first: boolean;
+    is_help_wanted: boolean;
+    github_created_at: string; // ISO 8601 date string, equivalent to time.Time
     status: "open" | "closed"; // Specific string values
 }
 

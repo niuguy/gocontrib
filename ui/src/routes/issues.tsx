@@ -79,7 +79,7 @@ export const Component = function Issues(): JSX.Element {
       repo_name +
       "/issues?page=" +
       pageParam +
-      "&per_page=10";
+      "&per_page=20";
 
     if (label) {
       _url += "&label=" + label;
@@ -99,7 +99,7 @@ export const Component = function Issues(): JSX.Element {
     queryKey: ["issues", label],
     queryFn: fetchIssues,
     getNextPageParam: (pages) => {
-      return pages.length + 1;
+      return pages?.length + 1;
     },
     initialPageParam: 1,
   });
@@ -130,7 +130,12 @@ export const Component = function Issues(): JSX.Element {
     <Container sx={{ py: 2 }}>
       <Box sx={{ display: "flex", alignItems: "center", mb: 1 }}>
         <Typography level="h2" gutterBottom sx={{ mr: 2 }}>
-          {repo_owner}/{repo_name}
+          <a
+            href={`/issues/${repo_owner}/${repo_name}`}
+            rel="noopener noreferrer"
+          >
+            {repo_owner}/{repo_name}
+          </a>
         </Typography>
         <IconButton
           onClick={handleFollowClick}
@@ -184,18 +189,36 @@ export const Component = function Issues(): JSX.Element {
       <Box sx={{ width: "100%", py: 2, overflowY: "auto" }}>
         {issues?.pages?.map((group, i) => (
           <Fragment key={i}>
-            {group.map((issue: Issue) => (
+            {group?.map((issue: Issue) => (
               <Card key={issue.github_id} sx={{ mb: 2, p: 2 }}>
                 <Box
-                  sx={{ display: "flex", alignItems: "center", gap: 0, mb: 1 }}
+                  sx={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    gap: 0,
+                    mb: 1,
+                  }}
                 >
-                  <a
-                    href={issue.url}
-                    target="_blank"
-                  >
-                    {issue.title}
-                    <OpenInNewIcon fontSize="small" />
-                  </a>
+                  <Typography level="body-lg">
+                    <a href={issue.url} target="_blank">
+                      {issue.title}
+                    </a>
+                    <OpenInNewIcon  sx={{ fontSize: 14 }} />
+                  </Typography>
+                </Box>
+                <Box>
+                  <Typography level="body-sm">
+                    Opened at{" "}
+                    {new Date(issue.github_created_at).toLocaleDateString(
+                      "en-US",
+                      {
+                        year: "numeric",
+                        month: "long",
+                        day: "numeric",
+                      }
+                    )}
+                  </Typography>
                 </Box>
 
                 <Box
@@ -207,7 +230,17 @@ export const Component = function Issues(): JSX.Element {
                 >
                   <Box sx={{ display: "flex", gap: 1, flexWrap: "wrap" }}>
                     {issue.labels?.map((label, i) => (
-                      <Chip key={i} disabled={false}>
+                      <Chip 
+                        key={i}
+                        disabled={false}
+                        slotProps={{
+                          action: {
+                            component: "a",
+                            href: `/issues/${repo_owner}/${repo_name}?label=${label}`,
+                          },
+                        }}
+                      
+                      >
                         {label}
                       </Chip>
                     ))}
