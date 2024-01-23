@@ -1,6 +1,3 @@
-/* SPDX-FileCopyrightText: 2014-present Kriasoft */
-/* SPDX-License-Identifier: MIT */
-
 import { CssVarsProvider } from "@mui/joy";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
@@ -27,7 +24,7 @@ root.render(
         </StoreProvider>
       </SnackbarProvider>
     </CssVarsProvider>
-  </StrictMode>,
+  </StrictMode>
 );
 
 if (import.meta.hot) {

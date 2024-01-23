@@ -1,6 +1,3 @@
-/* SPDX-FileCopyrightText: 2014-present Kriasoft */
-/* SPDX-License-Identifier: MIT */
-
 import { Box, BoxProps, List } from "@mui/joy";
 
 import { Following } from "./sidebar-following";

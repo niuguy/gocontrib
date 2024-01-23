@@ -1,6 +1,3 @@
-/* SPDX-FileCopyrightText: 2014-present Kriasoft */
-/* SPDX-License-Identifier: MIT */
-
 import { createStore, Provider } from "jotai";
 import { createElement, ReactNode } from "react";
 
@@ -18,7 +15,7 @@ export type StoreProviderProps = {
   children: ReactNode;
 };
 
-  
+
 import { atom } from 'jotai';
 
 export const refreshCounterAtom = atom(0);

@@ -1,9 +1,5 @@
-/* SPDX-FileCopyrightText: 2014-present Kriasoft */
-/* SPDX-License-Identifier: MIT */
-
 import { Box, BoxProps } from "@mui/joy";
 import { Fragment, Suspense } from "react";
-
 
 export function Toolbar(props: ToolbarProps): JSX.Element {
   const { sx, ...other } = props;
@@ -32,15 +28,11 @@ export function Toolbar(props: ToolbarProps): JSX.Element {
 }
 
 function ActionButtons(): JSX.Element {
-
   return (
     <Fragment>
-
       {/* <IconButton variant="soft" size="sm">
         <NotificationsRounded />
       </IconButton> */}
-
-      
     </Fragment>
   );
 }

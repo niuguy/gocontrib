@@ -65,8 +65,8 @@ export function Following(): JSX.Element {
         size="sm"
         sx={{
           "--ListItemDecorator-size": "40px",
-          height: '600px',
-          "overflowY": 'auto'
+          height: "600px",
+          overflowY: "auto",
         }}
       >
         {followings?.map((repo) => (

@@ -1,6 +1,3 @@
-/* SPDX-FileCopyrightText: 2014-present Kriasoft */
-/* SPDX-License-Identifier: MIT */
-
 import { extendTheme, ThemeProvider as Provider } from "@mui/joy/styles";
 import { createElement, ReactNode } from "react";
 

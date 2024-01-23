@@ -204,7 +204,7 @@ export const Component = function Issues(): JSX.Element {
                     <a href={issue.url} target="_blank">
                       {issue.title}
                     </a>
-                    <OpenInNewIcon  sx={{ fontSize: 14 }} />
+                    <OpenInNewIcon sx={{ fontSize: 14 }} />
                   </Typography>
                 </Box>
                 <Box>
@@ -230,7 +230,7 @@ export const Component = function Issues(): JSX.Element {
                 >
                   <Box sx={{ display: "flex", gap: 1, flexWrap: "wrap" }}>
                     {issue.labels?.map((label, i) => (
-                      <Chip 
+                      <Chip
                         key={i}
                         disabled={false}
                         slotProps={{
@@ -239,7 +239,6 @@ export const Component = function Issues(): JSX.Element {
                             href: `/issues/${repo_owner}/${repo_name}?label=${label}`,
                           },
                         }}
-                      
                       >
                         {label}
                       </Chip>

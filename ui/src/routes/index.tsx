@@ -1,6 +1,3 @@
-/* SPDX-FileCopyrightText: 2014-present Kriasoft */
-/* SPDX-License-Identifier: MIT */
-
 import { createElement } from "react";
 import {
   createBrowserRouter,
@@ -9,10 +6,7 @@ import {
 } from "react-router-dom";
 import { MainLayout, RootError } from "../components";
 
-/**
- * Application routes
- * https://reactrouter.com/en/main/routers/create-browser-router
- */
+
 export const router = createBrowserRouter([
   {
     path: "",

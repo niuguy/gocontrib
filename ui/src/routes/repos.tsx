@@ -6,7 +6,7 @@ import { useLocation } from "react-router-dom";
 
 import apiClient from "../apis/client";
 import { refreshCounterAtom } from "../core/store";
-import StarIcon from '@mui/icons-material/Star';
+import StarIcon from "@mui/icons-material/Star";
 
 import { Repository } from "../core/types";
 import Star from "@mui/icons-material/Star";
@@ -72,12 +72,12 @@ export const Component = function Repos(): JSX.Element {
             {group.map((repo: Repository) => (
               <Card key={repo.github_id} sx={{ p: 2, my: 2 }}>
                 <Typography level="h3" gutterBottom>
-                  {repo.owner}/{repo.name}  {" "}  <Typography level='body-md'>
-                  <StarIcon/> {repo.stars}
+                  {repo.owner}/{repo.name}{" "}
+                  <Typography level="body-md">
+                    <StarIcon /> {repo.stars}
+                  </Typography>
                 </Typography>
-                </Typography>
-               
-              
+
                 <Typography>{repo.description}</Typography>
                 <Typography gutterBottom>
                   <a href={`/issues/${repo.owner}/${repo.name}`}>
