@@ -13,7 +13,5 @@ func main() {
 }
 
 func openBrowser(url string) {
-	// var err error
-
 	exec.Command("open", url).Start()
 }
