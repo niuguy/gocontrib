@@ -48,8 +48,3 @@ Go to  http://localhost:4573 to see the app running with hot reload enabled (tha
 
 Contributions are welcome. Please open an issue or a pull request.
 
-
-### License
-
-MIT License
-
