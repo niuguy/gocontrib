@@ -4,15 +4,16 @@ GoContrib is a web app built for open source contributors especially for first t
   *  Search for github repositories you are interested in contributing to
   *  Follow the repository and have a quick access to its help wanted/good first issues
 
-It is built using golang embedding reactjs . The data is stored in sqlite . The search and issues listing is powered by github api.
-
 ### How to run
 
 Make sure you have golang and pnpm(you can replace with npm) installed, then
 
 * Clone the repo
-* Build the frontend by running `make ui` )
+* Get a github token with `repo` scopes and set it as `GITHUB_TOKEN` environment variable.
+* Build the frontend by running `make ui` 
 * Run the server by running `make run`  
+
+
 
 You can then check the app at http://localhost:8080, the databse will be at the same directory named `gocontrib.sqlite`
 
@@ -20,6 +21,7 @@ You can then check the app at http://localhost:8080, the databse will be at the 
 
 * Golang
 * Reactjs + Typescript
+* Github api
 * Sqlite
 * Material Joy UI
 
