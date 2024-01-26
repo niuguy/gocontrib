@@ -17,5 +17,3 @@ func openBrowser(url string) {
 
 	exec.Command("open", url).Start()
 }
-
-// Path: server/server.go

@@ -1,6 +1,5 @@
-import { Box, BoxProps, Typography, IconButton, Link } from "@mui/joy";
-import HandymanIcon from '@mui/icons-material/Handyman';
-
+import HandymanIcon from "@mui/icons-material/Handyman";
+import { Box, BoxProps, Typography } from "@mui/joy";
 
 export function Logo(props: LogoProps): JSX.Element {
   const { sx, ...other } = props;
@@ -18,7 +17,7 @@ export function Logo(props: LogoProps): JSX.Element {
       }}
       {...other}
     >
-        <HandymanIcon />
+      <HandymanIcon />
       <Typography sx={{ fontSize: "1.25rem" }} level="h4" component="div">
         {import.meta.env.VITE_APP_NAME}
       </Typography>

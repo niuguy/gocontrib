@@ -1,20 +1,16 @@
 import { Box, Button, Card, Container, Snackbar, Typography } from "@mui/joy";
 import { useInfiniteQuery } from "@tanstack/react-query";
-import { useAtom } from "jotai";
 import { Fragment, useState } from "react";
 import { useLocation } from "react-router-dom";
 
-import apiClient from "../apis/client";
-import { refreshCounterAtom } from "../core/store";
 import StarIcon from "@mui/icons-material/Star";
+import apiClient from "../apis/client";
 
 import { Repository } from "../core/types";
-import Star from "@mui/icons-material/Star";
 export const Component = function Repos(): JSX.Element {
-  const [successMessage, setSuccessMessage] = useState("");
-  const [errorMessage, setErrorMessage] = useState("");
+  const [successMessage] = useState("");
+  const [errorMessage] = useState("");
   const [openSnackbar, setOpenSnackbar] = useState(false);
-  const [refreshCounter, setRefreshCounter] = useAtom(refreshCounterAtom);
 
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);

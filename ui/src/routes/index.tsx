@@ -6,7 +6,6 @@ import {
 } from "react-router-dom";
 import { MainLayout, RootError } from "../components";
 
-
 export const router = createBrowserRouter([
   {
     path: "",
