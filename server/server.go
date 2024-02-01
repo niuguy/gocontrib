@@ -32,6 +32,7 @@ func NewServer(s *storage.Storage) *Server {
 
 	// serve api
 	apiRoute := engine.Group("/api")
+	bindPing(apiRoute)
 	BindTasksApi(apiRoute, s)
 	BindGithubApi(apiRoute, ghClient)
 	BindRepoApi(apiRoute, s)
@@ -42,6 +43,12 @@ func NewServer(s *storage.Storage) *Server {
 	_server := Server{storage: s, engine: engine}
 
 	return &_server
+}
+
+func bindPing(api *gin.RouterGroup) {
+	api.GET("/ping", func(c *gin.Context) {
+		c.JSON(200, gin.H{"message": "pong"})
+	})
 }
 
 func bindUI(engine *gin.Engine) {

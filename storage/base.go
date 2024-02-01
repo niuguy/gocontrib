@@ -10,6 +10,7 @@ type Storage struct {
 }
 
 func NewStorage(dbDir string) *Storage {
+
 	db := setupDB(dbDir)
 	return &Storage{DB: db}
 }
