@@ -1,0 +1,14 @@
+version: '3.8'
+services:
+  app:
+    build: .
+    ports:
+      - "8080:8080" 
+    environment:
+      GIN_MODE: release
+      GITHUB_TOKEN: "YOUR-GITHUB-TOKEN"
+    volumes:
+      - type: bind
+        source: . # This path on your host machine will be used for SQLite storage
+        target: /home/appuser/.contrib # Updated to match the non-root user's home directory structure
+    user: appuser 
