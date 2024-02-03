@@ -166,7 +166,6 @@ func TestRepoApi(t *testing.T) {
 		method         string
 		endpoint       string
 		setupFunc      func() *models.Repository
-		modifyFunc     func(*models.Repository)
 		cleanupFunc    func()
 		expectedStatus int
 		expectedBody   string
@@ -186,7 +185,7 @@ func TestRepoApi(t *testing.T) {
 			expectedStatus: http.StatusOK,
 		},
 		{
-			name:           "Test repo get",
+			name:           "Test repos get",
 			method:         "GET",
 			endpoint:       "/api/repos",
 			setupFunc:      func() *models.Repository { _createRepo(s); return nil },
@@ -211,10 +210,6 @@ func TestRepoApi(t *testing.T) {
 				repo = tt.setupFunc()
 			}
 
-			if tt.modifyFunc != nil && repo != nil {
-				tt.modifyFunc(repo)
-			}
-
 			if repo != nil {
 				bodyJSON, _ := json.Marshal(repo)
 				req, err = http.NewRequest(tt.method, tt.endpoint, bytes.NewBuffer(bodyJSON))
@@ -236,4 +231,68 @@ func TestRepoApi(t *testing.T) {
 			}
 		})
 	}
+}
+
+func TestGithubRepoSearchApi(t *testing.T) {
+
+	dbPath := "file::memory:?cache=shared"
+	storage := storage.NewStorage(dbPath)
+	storage.AutoMigrate()
+	s := NewServer(storage)
+
+	tests := []struct {
+		name           string
+		method         string
+		endpoint       string
+		expectedStatus int
+		expectedBody   string
+	}{
+		{
+			name:           "Search with default parameters",
+			method:         "GET",
+			endpoint:       "/api/github/repo/search?lang=abc",
+			expectedStatus: http.StatusOK,
+		},
+		{
+			name:           "Search with specific parameters",
+			method:         "GET",
+			endpoint:       "/api/github/repo/search?lang=Python&minStars=1500&page=1&count=1",
+			expectedStatus: http.StatusOK,
+		},
+
+		{
+			name:           "List issues with default parameters",
+			method:         "GET",
+			endpoint:       "/github/repo/golang/go/issues",
+			expectedStatus: http.StatusOK,
+		},
+		{
+			name:           "List issues with label filter",
+			method:         "GET",
+			endpoint:       "/github/repo/golang/go/issues?label=bug",
+			expectedStatus: http.StatusOK,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			var req *http.Request
+			var err error
+			req, err = http.NewRequest(tt.method, tt.endpoint, nil)
+			if err != nil {
+				t.Fatal(err)
+			}
+			w := httptest.NewRecorder()
+			s.engine.ServeHTTP(w, req)
+
+			// Assert HTTP status code
+			assert.Equal(t, tt.expectedStatus, w.Code, "HTTP status code should match")
+
+			// If expectedBody is specified, assert the response body matches
+			if tt.expectedBody != "" {
+				assert.JSONEq(t, tt.expectedBody, w.Body.String(), "Response body should match expected JSON")
+			}
+		})
+	}
+
 }
