@@ -1,20 +1,18 @@
-## About
+# GoContrib
 
 GoContrib is a web app built for contributors to manage their contributions to any github repository.
 
+
+https://github.com/niuguy/gocontrib/assets/1400357/0d919b32-bef9-4420-bd82-89977fff2838
+
+
+
 features:
 
-  
-👉 **Search & explore github repositories**
-![image](https://github.com/niuguy/gocontrib/assets/1400357/2f928c91-57ca-412a-bf4a-a1e761f78f8b)
-    
-👉 **Set up quick access to your favorite repos**
-![image](https://github.com/niuguy/gocontrib/assets/1400357/e5ac5ff2-676b-43bd-b872-e6d22a9b5bf0)
-
-👉 **Add any issue to your task board**
-![image](https://github.com/niuguy/gocontrib/assets/1400357/1aa4bdf7-b68b-4d63-9698-9a8d588d7b00)
-
-👉 **Manage task status and add notes**
+* Search & explore github repositories
+* Set up quick access to your favorite repos
+* Add any issue to your task board
+* Manage task status and add notes
 
 
 
