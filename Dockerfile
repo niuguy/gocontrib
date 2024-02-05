@@ -20,7 +20,7 @@ WORKDIR /app
 # Copy the Go application source code
 COPY . .
 
-# IMPORTANT: Adjusted to copy from the correct build output directory
+# Adjusted to copy from the correct build output directory
 COPY --from=uibuilder /app/ui/dist ./ui/dist
 
 # Set environment variable for Go application
@@ -45,11 +45,9 @@ USER appuser
 
 # Copy the binary from the appbuilder stage
 COPY --from=appbuilder /app/bin/gocrontrib .
-# IMPORTANT: Copy the UI dist directory to the correct location
+# Copy the UI dist directory to the correct location
 COPY --from=appbuilder /app/ui/dist ./ui/dist
 
-# Expose the port your app runs on
-EXPOSE 8000
+EXPOSE 8080
 
-# Command to run the application
 CMD ["./gocrontrib"]
